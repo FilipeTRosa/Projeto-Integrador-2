@@ -26,7 +26,7 @@ int main(int argc, char const *argv[])
         printf("3 - Imprimir memórias (instruções e dados)\n");
         printf("4 - Imprimir banco de registradores\n");
         printf("5 - Imprimir todo o simulador (registradores e memórias)\n");
-        printf("6 - Salvar .asm\n");
+        printf("6 - Converter binario .asm\n"); //// TESTE de funcao
         printf("7 - Salvar .dat\n");
         printf("8 - Executa Programa (run)\n");
         printf("9 - Executa uma instrução (Step)\n");
@@ -65,11 +65,14 @@ int main(int argc, char const *argv[])
             case 2:
                 break;
             case 3:
-                for (int i = 0; i < 10; i++) { // tamanho 10 só para teste
-                    printf("Instrucao %d: %s, opcode: %d, rs: %d, rt: %d, rd: %d, funct: %d, imm: %d, addr: %d\n",
-                        i, mem.mem_inst[i].inst_char, mem.mem_inst[i].opcode, mem.mem_inst[i].rs,
-                        mem.mem_inst[i].rt, mem.mem_inst[i].rd, mem.mem_inst[i].funct,
-                        mem.mem_inst[i].imm, mem.mem_inst[i].addr);
+                //imprime memorias
+                for (int i = 0; i < 256; i++) { // tamanho 10 só para teste
+                
+                        printf("Instrucao %d:Binario: %s, opcode: %d, rs: %d, rt: %d, rd: %d, funct: %d, imm: %d, addr: %d\n",
+                            i, mem.mem_inst[i].inst_char, mem.mem_inst[i].opcode, mem.mem_inst[i].rs,
+                            mem.mem_inst[i].rt, mem.mem_inst[i].rd, mem.mem_inst[i].funct,
+                            mem.mem_inst[i].imm, mem.mem_inst[i].addr);
+                    
                 }
                 break;
             case 4:
@@ -77,6 +80,10 @@ int main(int argc, char const *argv[])
             case 5:
                 break;
             case 6:
+                int dec;
+                int comp2 = 0;
+                dec = conversorBinParaDecimal(comp2,mem.mem_inst[6].inst_char);
+
                 break;
             case 7:
                 break;

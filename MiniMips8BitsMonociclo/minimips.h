@@ -31,4 +31,4 @@ int tamanho;
     };
 
 
-
+int conversorBinParaDecimal (int compDeDois, char * palavra);
