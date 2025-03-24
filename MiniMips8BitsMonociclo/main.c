@@ -81,9 +81,9 @@ int main(int argc, char const *argv[])
                 break;
             case 6:
                 int dec;
-                int comp2 = 0;
+                int comp2 = 1;
                 dec = conversorBinParaDecimal(comp2,mem.mem_inst[6].inst_char);
-
+                printf("Valor em decimal: [%d]", dec);
                 break;
             case 7:
                 break;

@@ -32,3 +32,4 @@ int tamanho;
 
 
 int conversorBinParaDecimal (int compDeDois, char * palavra);
+struct instrucao buscaInstrucao(struct memoria_instrucao * memoria, int pc);
