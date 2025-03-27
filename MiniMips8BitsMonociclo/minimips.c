@@ -18,8 +18,8 @@ int conversorBinParaDecimal (int compDeDois, char * palavra){
     {
         /* complemento de 2 */
         //...
-
-        char binario[len + 1];
+        
+        char binario[len + 1]; //no windows reclama dessa linha
         binario[len] = '\0';
         for (int j = 0; j < len ; j++) // for para inverter os bits
         {
@@ -96,4 +96,39 @@ struct instrucao buscaInstrucao(struct memoria_instrucao * memoria, int pc){
     }
     
     return memoria->mem_inst[pc];
+}
+
+
+void carregarInstrucoes(const char *nomeArquivo, struct memoria_instrucao *mem){
+
+    FILE *arquivoEntrada = fopen(nomeArquivo, "r");  
+    if (!arquivoEntrada) {
+        printf("Erro ao abrir o arquivo %s.\n", nomeArquivo);
+        return;
+    }
+
+    char caractere;
+    char palavra[17];  // Tamanho instrução + \0
+    int n = 0, posicao = 0;
+
+    while ((caractere = fgetc(arquivoEntrada)) != EOF) {
+        if (caractere != '\n') {
+            palavra[n] = caractere;
+            n++;
+        } else {
+            if (n > 0) {
+                palavra[n] = '\0';  // Coloca \0 no final da string
+                strcpy(mem->mem_inst[posicao].inst_char, palavra);
+                posicao++;
+            }
+            n = 0;  // Reseta para a próxima linha
+        }
+    }
+
+    fclose(arquivoEntrada);
+    
+
+
+
+
 }
