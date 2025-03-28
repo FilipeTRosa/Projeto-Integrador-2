@@ -19,14 +19,22 @@ int main(int argc, char const *argv[])
     //Configuracao de variaveis do sistema
     int menu = 0;
     int pc = 0;
+
+    // CRIANDO BANCO DE REGISTRADORES //
+
+    regs *reg = NULL;
+    BRegs *bancoRegistradores = NULL;
+
+    bancoRegistradores = alocaBancoRegistradores();
+
+    for (int i = 0; i <  8; i++) {
+        reg = criaRegistrador();
+        criaBanco(bancoRegistradores, reg);
+    }
+
+    imprimeBanco(bancoRegistradores); // Testando se o banco de registradores foi criado de maneira correta
+
     //Fim config do sistema
-
-
-
-
-
-
-
 
     do {
         printf("\n===== MENU =====\n");
