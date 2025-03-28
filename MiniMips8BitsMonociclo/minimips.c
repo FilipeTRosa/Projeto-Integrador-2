@@ -1,5 +1,6 @@
 #include "minimips.h"
 #include <string.h>
+#include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
 
@@ -131,4 +132,57 @@ void carregarInstrucoes(const char *nomeArquivo, struct memoria_instrucao *mem){
 
 
 
+}
+
+BRegs* alocaBancoRegistradores() {
+
+  BRegs* newBanco = (BRegs *)malloc(sizeof(BRegs));
+  newBanco->registradores = NULL;
+  newBanco->tamanho = 0;
+
+  return newBanco;
+}
+
+regs* criaRegistrador() {
+
+  regs *newReg = (regs *)malloc(sizeof(regs));
+  newReg->id = 0;
+  newReg->valor = 0;
+  newReg->prox = NULL;
+
+  return newReg;
+}
+
+void criaBanco(BRegs* bancoRegs, regs* reg){
+  if(bancoRegs->registradores == NULL) {
+    bancoRegs->registradores = reg;
+    bancoRegs->tamanho++;
+    bancoRegs->registradores->id = bancoRegs->tamanho;
+  }
+  else {
+    regs *aux = bancoRegs->registradores;
+
+    while(aux->prox != NULL) {
+      aux = aux->prox;
+    }
+    aux->prox = reg;
+    bancoRegs->tamanho++;
+    aux->prox->id = bancoRegs->tamanho;
+  }
+}
+
+void imprimeBanco(BRegs* bancoRegs) {
+  regs *aux = bancoRegs->registradores;
+
+  while(aux->prox != NULL) {
+    imprimeReg(aux);
+    aux = aux->prox;
+  }
+}
+
+void imprimeReg(regs* reg) {
+  printf("\n====================\n");
+  printf("ID: %d\n", reg->id);
+  printf("Valor: %d\n", reg->valor);
+  printf("====================\n");
 }
