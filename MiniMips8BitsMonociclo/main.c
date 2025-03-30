@@ -32,7 +32,7 @@ int main(int argc, char const *argv[])
         criaBanco(bancoRegistradores, reg);
     }
 
-    imprimeBanco(bancoRegistradores); // Testando se o banco de registradores foi criado de maneira correta
+    //imprimeBanco(bancoRegistradores); // Testando se o banco de registradores foi criado de maneira correta
 
     //Fim config do sistema
 
@@ -53,64 +53,41 @@ int main(int argc, char const *argv[])
         scanf("%d", &menu);
 
         switch (menu) {
-            case 1:
-                
-            
-            carregarInstrucoes("programaTestaInstrucoes.mem", &mem);
-            
-                //codigo antes de transformar em função
-                /*
-                FILE *arquivoEntrada;
-                arquivoEntrada = fopen("programaTestaInstrucoes.mem", "r"); 
-                char caractere;
-                char palavra[17];
-                int n=0, posicao=0;
-                while ((caractere = fgetc(arquivoEntrada)) !=EOF) //enquanto n acha o fim do arquivo... anda
-                {
-                    if (caractere != '\n') //enquanto nao acha o fim da frase guarda palavra
-                    {
-                        palavra[n] = caractere;
-                        n++;
-                    }else
-                    {//achou o \n
-                        if (n>0)
-                        {
-                            palavra[n] = '\n';
-                            strcpy(mem.mem_inst[posicao].inst_char, strtok(palavra,"\n"));
-                            posicao++;
-                        }
-                        n=0;
-                        palavra[n] = '\n';
-                    }                   
-                }
-                */
+            case 1:        
+                carregarInstrucoes("programaTestaInstrucoes.mem", &mem);
                 break;
             case 2:
                 break;
             case 3:
                 //imprime memorias
-                for (int i = 0; i < 10; i++) { // tamanho 10 só para teste
-                
+                system("clear");
+
+                for (int i = 0; i < 30; i++) { // tamanho 10 só para teste
                     //teste de impressão
-                    printf("Instrucao %d:Binario: %s, opcode: %d, rs: %d, rt: %d, rd: %d, funct: %d, imm: %d, addr: %d\n",
-                        i, mem.mem_inst[i].inst_char, mem.mem_inst[i].opcode, mem.mem_inst[i].rs,
-                        mem.mem_inst[i].rt, mem.mem_inst[i].rd, mem.mem_inst[i].funct,
-                        mem.mem_inst[i].imm, mem.mem_inst[i].addr);
+                    imprimeInstrucao(mem.mem_inst[i]);
                 }
                 break;
             case 4:
+                system("clear");
+                imprimeBanco(bancoRegistradores); // Testando se o banco de registradores foi criado de maneira correta
                 break;
             case 5:
                 break;
             case 6:
-                dec = conversorBinParaDecimal(comp2,mem.mem_inst[6].inst_char);
-                printf("Valor em decimal: [%d]", dec);
+                system("clear");
+                comp2 = 1;
+                dec = conversorBinParaDecimal(comp2,mem.mem_inst[2].inst_char);
+                printf("Valor em decimal com comp de 2: [%d]\n", dec);
+                comp2 = 0;
+                dec = conversorBinParaDecimal(comp2,mem.mem_inst[2].inst_char);
+                printf("Valor em decimal sem comp de 2: [%d]\n", dec);
                 break;
             case 7:
                 break;
             case 8:
                 break;
             case 9:
+                decodificaInstrucao(buscaInstrucao(&mem, 5));
                 break;
             case 10:
                 break;

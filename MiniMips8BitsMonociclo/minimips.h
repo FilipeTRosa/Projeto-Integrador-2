@@ -55,5 +55,12 @@ void imprimeBanco(BRegs* bancoRegs);
 int conversorBinParaDecimal (int compDeDois, char * palavra);
 struct instrucao buscaInstrucao(struct memoria_instrucao * memoria, int pc);
 void carregarInstrucoes(const char *nomeArquivo, struct memoria_instrucao *mem);
-
-
+void imprimeInstrucao(struct instrucao inst);
+struct instrucao decodificaInstrucao(struct instrucao inst);
+void getOpcode(const char * palavra, char *opcode);
+void getRs(const char *palavra, char *rs);
+void getRt(const char *palavra, char *rt);
+void getRd(const char *palavra, char *rd);
+void getFunct(const char *palavra, char *funct);
+void getImm(const char *palavra, char *imm);
+void getAddr(const char *palavra, char *addr);
