@@ -64,3 +64,4 @@ void getRd(const char *palavra, char *rd);
 void getFunct(const char *palavra, char *funct);
 void getImm(const char *palavra, char *imm);
 void getAddr(const char *palavra, char *addr);
+void estenderSinalImm(char * imm, char * immExtendido);

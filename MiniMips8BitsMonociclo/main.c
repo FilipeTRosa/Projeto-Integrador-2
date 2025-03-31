@@ -18,8 +18,8 @@ int main(int argc, char const *argv[])
     
     //Configuracao de variaveis do sistema
     int menu = 0;
-    int pc = 0;
-
+    int pc = 2;
+    struct instrucao instBuscada;
     // CRIANDO BANCO DE REGISTRADORES //
 
     regs *reg = NULL;
@@ -85,6 +85,8 @@ int main(int argc, char const *argv[])
             case 7:
                 break;
             case 8:
+                instBuscada = buscaInstrucao(&mem, pc);
+                imprimeInstrucao(instBuscada);
                 break;
             case 9:
                 decodificaInstrucao(buscaInstrucao(&mem, 5));

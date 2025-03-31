@@ -220,6 +220,15 @@ void getAddr(const char *palavra, char *addr){
     addr[7] = '\0';
 }
 
+void estenderSinalImm(char * imm, char * immExtendido){
+    immExtendido[0] = imm[0];
+    immExtendido[1] = imm[1];
+
+    strcpy(immExtendido + 2, imm);
+
+    immExtendido[strlen(imm) + 2 ]= '\0';
+}
+
 struct instrucao decodificaInstrucao(struct instrucao inst){
     
     //struct instrucao instruc;
@@ -234,6 +243,7 @@ struct instrucao decodificaInstrucao(struct instrucao inst){
     char rd[4];
     char imm[6];
     char addr[7];
+    char immExtendido[8];
 
     //Opcode
     getOpcode(inst.inst_char, opcode);
@@ -281,7 +291,10 @@ struct instrucao decodificaInstrucao(struct instrucao inst){
 
         //imm
         getImm(inst.inst_char, imm);
-        inst.imm = conversorBinParaDecimal(1,imm); //complemento de 2
+        printf("\n Imm antes %s \n", imm);
+        estenderSinalImm(imm, immExtendido);
+        printf("\n Imm depois %s \n", immExtendido);
+        inst.imm = conversorBinParaDecimal(1,immExtendido); //complemento de 2
         //Fim imm
     
         //imprimeInstrucao(inst);
