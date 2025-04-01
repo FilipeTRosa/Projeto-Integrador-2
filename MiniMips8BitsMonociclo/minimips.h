@@ -1,7 +1,6 @@
 typedef struct bancoRegistradores BRegs;
 typedef struct registrador regs;
 
-
 enum classe_inst{
     tipo_I, tipo_J, tipo_R, tipo_OUTROS
     };
@@ -46,11 +45,22 @@ struct registrador
     regs *prox;
 };
 
+// ================= BANCO DE REGISTRADORES ========================= //
+
 BRegs* alocaBancoRegistradores();
 regs* criaRegistrador();
 void criaBanco(BRegs* bancoRegs, regs* reg);
 void imprimeReg(regs* reg);
 void imprimeBanco(BRegs* bancoRegs);
+int* buscaBancoRegs(BRegs* bancoRegs, int rs, int rt, int rd, int defDest);
+void salvaDadoReg(BRegs* bancoRegistradores, int* resultadoULA, int* vetBuscaReg);
+
+// ================================================================== //
+
+// ===================== ULA ======================================== //
+
+int* processamentoULA(int* dadosBancoRegs, int funct);
+int comparaRegs(int* dadosBancoRegs);
 
 int conversorBinParaDecimal (int compDeDois, char * palavra);
 struct instrucao buscaInstrucao(struct memoria_instrucao * memoria, int pc);

@@ -20,6 +20,7 @@ int main(int argc, char const *argv[])
     int menu = 0;
     int pc = 2;
     struct instrucao instBuscada;
+
     // CRIANDO BANCO DE REGISTRADORES //
 
     regs *reg = NULL;
@@ -27,12 +28,23 @@ int main(int argc, char const *argv[])
 
     bancoRegistradores = alocaBancoRegistradores();
 
-    for (int i = 0; i <  8; i++) {
+    for (int i = 0; i <= 8; i++) {
         reg = criaRegistrador();
         criaBanco(bancoRegistradores, reg);
     }
 
-    //imprimeBanco(bancoRegistradores); // Testando se o banco de registradores foi criado de maneira correta
+    // TESTANDO BUSCA NO BANCO DE REGISTRADORES //
+
+    int *vetBusca = NULL;
+    vetBusca = buscaBancoRegs(bancoRegistradores, 0, 4, 6, 1);  // Passou no teste, colocar no lugar correto dentro do código
+
+    // TESTANDO A UNIDADE LOGICA ARITMETICA //
+
+    int *resultadoULA = NULL;
+    resultadoULA = processamentoULA(vetBusca, 0);
+
+    salvaDadoReg(bancoRegistradores, resultadoULA, vetBusca);   // Nesse passo está realizando uma soma com a ULA e salvando o resultado em um registrador
+
 
     //Fim config do sistema
 
