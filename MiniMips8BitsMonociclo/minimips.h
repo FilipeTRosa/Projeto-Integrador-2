@@ -28,7 +28,7 @@ int dado;
     };
 
 struct memoria_dados{
-struct instrucao *mem_dados;
+struct dado *mem_dados;
 int tamanho;
     };
 
@@ -56,7 +56,7 @@ int* buscaBancoRegs(BRegs* bancoRegs, int rs, int rt, int rd, int defDest);
 void salvaDadoReg(BRegs* bancoRegistradores, int* resultadoULA, int* vetBuscaReg);
 
 // ================================================================== //
-
+void carregarDados(const char *nomeArquivo, struct memoria_dados *memDados);
 // ===================== ULA ======================================== //
 
 int* processamentoULA(int* dadosBancoRegs, int funct);

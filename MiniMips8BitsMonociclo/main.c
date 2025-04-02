@@ -11,6 +11,13 @@ int main(int argc, char const *argv[])
     mem.mem_inst = (struct instrucao *)malloc(256 *sizeof(struct instrucao));
     mem.tamanho = 256;
     //Fim alocação de memoria de instrucao
+
+    //Alocando memoria de dados
+    struct memoria_dados memDados;
+    memDados.mem_dados = (struct dado*)malloc(256 *sizeof(struct dado));
+    memDados.tamanho = 256;
+    //Fim alocação de memoria de dados
+
     //Variaveis do conversor de bin
     int dec;
     int comp2 = 1;
@@ -65,8 +72,12 @@ int main(int argc, char const *argv[])
         scanf("%d", &menu);
 
         switch (menu) {
-            case 1:        
+            case 1:
+                carregarDados("dadosTeste.txt", &memDados);        
                 carregarInstrucoes("programaTestaInstrucoes.mem", &mem);
+                for (int i = 0; i < 20; i++) {
+                    printf("Memória[%d]: %d (%s)\n", i, memDados.mem_dados[i].dado, memDados.mem_dados[i].dado_char);
+                }
                 break;
             case 2:
                 break;
