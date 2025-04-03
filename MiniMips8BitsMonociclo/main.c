@@ -73,22 +73,16 @@ int main(int argc, char const *argv[])
 
         switch (menu) {
             case 1:
-                carregarDados("dadosTeste.txt", &memDados);        
                 carregarInstrucoes("programaTestaInstrucoes.mem", &mem);
-                for (int i = 0; i < 20; i++) {
-                    printf("Memória[%d]: %d (%s)\n", i, memDados.mem_dados[i].dado, memDados.mem_dados[i].dado_char);
-                }
                 break;
             case 2:
+                carregarDados("dadosTeste.txt", &memDados); 
                 break;
             case 3:
                 //imprime memorias
                 system("clear");
-
-                for (int i = 0; i < 30; i++) { // tamanho 10 só para teste
-                    //teste de impressão
-                    imprimeInstrucao(mem.mem_inst[i]);
-                }
+                imprimeMemInstrucoes(&mem);
+                imprimeMemDados(&memDados);
                 break;
             case 4:
                 system("clear");
