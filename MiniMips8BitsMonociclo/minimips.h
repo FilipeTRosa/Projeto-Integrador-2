@@ -57,11 +57,14 @@ void salvaDadoReg(BRegs* bancoRegistradores, int* resultadoULA, int* vetBuscaReg
 
 // ================================================================== //
 void carregarDados(const char *nomeArquivo, struct memoria_dados *memDados);
+void imprimeDado(struct dado dado);
+void imprimeMemDados(struct memoria_dados *mem);
 // ===================== ULA ======================================== //
 
 int* processamentoULA(int* dadosBancoRegs, int funct);
 int comparaRegs(int* dadosBancoRegs);
 
+void imprimeMemInstrucoes(struct memoria_instrucao *mem);
 int conversorBinParaDecimal (int compDeDois, char * palavra);
 struct instrucao buscaInstrucao(struct memoria_instrucao * memoria, int pc);
 void carregarInstrucoes(const char *nomeArquivo, struct memoria_instrucao *mem);

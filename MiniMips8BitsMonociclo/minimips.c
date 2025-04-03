@@ -95,9 +95,9 @@ void carregarDados(const char *nomeArquivo, struct memoria_dados *memDados){
     char linha[32];
     int posicao = 0;
 
-    // Inicializa a memória com um valor padrão (-1 para indicar "vazio")
+    // Inicializa a memória com um valor padrão (0 para indicar "vazio")
     for (int i = 0; i < memDados->tamanho; i++) {
-        memDados->mem_dados[i].dado = -1;
+        memDados->mem_dados[i].dado = 0;
         strcpy(memDados->mem_dados[i].dado_char, "vazio");
     }
 
@@ -200,18 +200,37 @@ void imprimeBanco(BRegs* bancoRegs) {
     }
 }
 
-void imprimeReg(regs* reg) {
-    printf("\n====================\n");
-    printf("ID: %d\n", reg->id);
-    printf("Valor: %d\n", reg->valor);
-    printf("====================\n");
-}
+ 
 
 void imprimeInstrucao(struct instrucao inst){ 
     printf("Binario: [%s], opcode: [%d], rs: [%d], rt: [%d], rd: [%d], funct: [%d], imm: [%d], addr: [%d]\n",
         inst.inst_char, inst.opcode, inst.rs,
         inst.rt, inst.rd, inst.funct,
         inst.imm, inst.addr);
+}
+
+void imprimeMemInstrucoes(struct memoria_instrucao *mem){
+    printf("==== Memoria de instruçoes ====\n");
+    for (int i = 0; i < mem->tamanho; i++)
+    {
+        printf("Posicao: [%d], ", i);
+        imprimeInstrucao(mem->mem_inst[i]);
+    }
+    printf("===============================\n");
+}
+
+void imprimeDado(struct dado dado){
+    printf("Valor: [%d]\n", dado.dado);
+}
+
+void imprimeMemDados(struct memoria_dados *mem){
+    printf("==== Memoria de dados ====\n");
+    for (int i = 0; i < mem->tamanho; i++)
+    {
+        printf("Posicao: [%d], ", i);
+        imprimeDado(mem->mem_dados[i]);
+    }
+    printf("==========================\n");
 }
 
 int* buscaBancoRegs(BRegs* bancoRegs, int rs, int rt, int rd, int defDest) {
@@ -243,7 +262,6 @@ int* buscaBancoRegs(BRegs* bancoRegs, int rs, int rt, int rd, int defDest) {
 
     return vetBusca;
 }
-
 
 int* processamentoULA(int* dadosBancoRegs, int funct) {
 
