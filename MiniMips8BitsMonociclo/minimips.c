@@ -74,7 +74,7 @@ int conversorBinParaDecimal (int compDeDois, char * palavra){
     
 }
 
-// retorna uma copia da instrução pois eu não quero que ela fique decodificada na memoria
+// retorna uma copia da instrução
 struct instrucao buscaInstrucao(struct memoria_instrucao * memoria, int pc){
     struct instrucao inst;    
     if (pc < 0 || pc >= memoria->tamanho) {
@@ -83,6 +83,36 @@ struct instrucao buscaInstrucao(struct memoria_instrucao * memoria, int pc){
     }
     
     return memoria->mem_inst[pc];
+}
+
+void carregarDados(const char *nomeArquivo, struct memoria_dados *memDados){
+    FILE *arquivo = fopen(nomeArquivo, "r");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo %s.\n", nomeArquivo);
+        return;
+    }
+
+    char linha[32];
+    int posicao = 0;
+
+    // Inicializa a memória com um valor padrão (0 para indicar "vazio")
+    for (int i = 0; i < memDados->tamanho; i++) {
+        memDados->mem_dados[i].dado = 0;
+        strcpy(memDados->mem_dados[i].dado_char, "vazio");
+    }
+
+    while (posicao < memDados->tamanho && fgets(linha, sizeof(linha), arquivo) != NULL) {
+        // Remove quebras de linha e espaços extras
+        linha[strcspn(linha, "\r\n")] = '\0';
+
+        if (strlen(linha) > 0) {  // Se a linha não estiver vazia
+            memDados->mem_dados[posicao].dado = atoi(linha);
+            snprintf(memDados->mem_dados[posicao].dado_char, sizeof(memDados->mem_dados[posicao].dado_char), "%d", memDados->mem_dados[posicao].dado);
+        }
+        posicao++;
+    }
+
+    fclose(arquivo);
 }
 
 
@@ -125,56 +155,52 @@ void carregarInstrucoes(const char *nomeArquivo, struct memoria_instrucao *mem){
 
 BRegs* alocaBancoRegistradores() {
 
-  BRegs* newBanco = (BRegs *)malloc(sizeof(BRegs));
-  newBanco->registradores = NULL;
-  newBanco->tamanho = 0;
+    BRegs* newBanco = (BRegs *)malloc(sizeof(BRegs));
+    newBanco->registradores = NULL;
+    newBanco->tamanho = 0;
 
-  return newBanco;
+    return newBanco;
 }
 
 regs* criaRegistrador() {
 
-  regs *newReg = (regs *)malloc(sizeof(regs));
-  newReg->id = 0;
-  newReg->valor = 0;
-  newReg->prox = NULL;
+    regs *newReg = (regs *)malloc(sizeof(regs));
+    newReg->id = 0;
+    newReg->valor = 0;
+    newReg->prox = NULL;
 
-  return newReg;
+    return newReg;
 }
 
 void criaBanco(BRegs* bancoRegs, regs* reg){
-  if(bancoRegs->registradores == NULL) {
-    bancoRegs->registradores = reg;
-    bancoRegs->tamanho++;
-    bancoRegs->registradores->id = bancoRegs->tamanho;
-  }
-  else {
-    regs *aux = bancoRegs->registradores;
-
-    while(aux->prox != NULL) {
-      aux = aux->prox;
+    if(bancoRegs->registradores == NULL) {
+        bancoRegs->registradores = reg;
+        bancoRegs->registradores->id = bancoRegs->tamanho;
+        bancoRegs->tamanho++;
+        bancoRegs->registradores->valor = 1;
     }
-    aux->prox = reg;
-    bancoRegs->tamanho++;
-    aux->prox->id = bancoRegs->tamanho;
-  }
+    else {
+        regs *aux = bancoRegs->registradores;
+
+        while(aux->prox != NULL) {
+        aux = aux->prox;
+        }
+        aux->prox = reg;
+        aux->prox->id = bancoRegs->tamanho;
+        bancoRegs->tamanho++;
+    }
 }
 
 void imprimeBanco(BRegs* bancoRegs) {
-  regs *aux = bancoRegs->registradores;
+    regs *aux = bancoRegs->registradores;
 
-  while(aux->prox != NULL) {
-    imprimeReg(aux);
-    aux = aux->prox;
-  }
+    while(aux->prox != NULL) {
+        imprimeReg(aux);
+        aux = aux->prox;
+    }
 }
 
-void imprimeReg(regs* reg) {
-  printf("\n====================\n");
-  printf("ID: %d\n", reg->id);
-  printf("Valor: %d\n", reg->valor);
-  printf("====================\n");
-}
+ 
 
 void imprimeInstrucao(struct instrucao inst){ 
     printf("Binario: [%s], opcode: [%d], rs: [%d], rt: [%d], rd: [%d], funct: [%d], imm: [%d], addr: [%d]\n",
@@ -183,6 +209,106 @@ void imprimeInstrucao(struct instrucao inst){
         inst.imm, inst.addr);
 }
 
+void imprimeMemInstrucoes(struct memoria_instrucao *mem){
+    printf("==== Memoria de instruçoes ====\n");
+    for (int i = 0; i < mem->tamanho; i++)
+    {
+        printf("Posicao: [%d], ", i);
+        imprimeInstrucao(mem->mem_inst[i]);
+    }
+    printf("===============================\n");
+}
+
+void imprimeDado(struct dado dado){
+    printf("Valor: [%d]\n", dado.dado);
+}
+
+void imprimeMemDados(struct memoria_dados *mem){
+    printf("==== Memoria de dados ====\n");
+    for (int i = 0; i < mem->tamanho; i++)
+    {
+        printf("Posicao: [%d], ", i);
+        imprimeDado(mem->mem_dados[i]);
+    }
+    printf("==========================\n");
+}
+
+int* buscaBancoRegs(BRegs* bancoRegs, int rs, int rt, int rd, int defDest) {
+    
+    regs* aux = bancoRegs->registradores;
+    int* vetBusca = (int *)malloc(3 * sizeof(int));
+
+    if(defDest == 0) {
+        rd = rt;
+    }
+
+    while(aux->id != rs) {
+        aux = aux->prox;
+    }
+
+    vetBusca[0] = aux->valor;
+
+    while(aux->id != rt) {
+        aux = aux->prox;
+    }
+
+    vetBusca[1] = aux->valor;
+
+    while(aux->id != rd) {
+        aux = aux->prox;
+    }
+
+    vetBusca[2] = aux->id;
+
+    return vetBusca;
+}
+
+int* processamentoULA(int* dadosBancoRegs, int funct) {
+
+    int* vetResultadoULA = (int *)malloc(3 * sizeof(int));
+
+    vetResultadoULA[2] = comparaRegs(dadosBancoRegs);
+
+    switch(funct) {
+        case 0:
+            vetResultadoULA[0] = dadosBancoRegs[0] + dadosBancoRegs[1]; 
+            break;
+        case 2:
+            vetResultadoULA[0] = dadosBancoRegs[0] - dadosBancoRegs[1];
+            break;
+        case 4:
+            vetResultadoULA[0] = dadosBancoRegs[0] && dadosBancoRegs[1];
+            break;
+        case 5:
+            vetResultadoULA[0] = dadosBancoRegs[0] || dadosBancoRegs[1]; 
+            break;
+        
+    }
+
+    return vetResultadoULA;
+}
+
+int comparaRegs(int* dadosBancoRegs) {
+    
+    int flag = 0;
+
+    if(dadosBancoRegs[0] == dadosBancoRegs[1]) {
+        flag = 1;
+    }
+
+    return flag;
+}
+
+void salvaDadoReg(BRegs* bancoRegistradores, int* resultadoULA, int* vetBuscaReg) {
+    
+    regs *aux = bancoRegistradores->registradores;
+
+    while(aux->id != vetBuscaReg[2]) {
+        aux = aux->prox;
+    }
+
+    aux->valor = resultadoULA[0];
+}
 
 
 void getOpcode(const char *palavra, char *opcode){
@@ -291,9 +417,9 @@ struct instrucao decodificaInstrucao(struct instrucao inst){
 
         //imm
         getImm(inst.inst_char, imm);
-        printf("\n Imm antes %s \n", imm);
+        //printf("\n Imm antes %s \n", imm);
         estenderSinalImm(imm, immExtendido);
-        printf("\n Imm depois %s \n", immExtendido);
+        //printf("\n Imm depois %s \n", immExtendido);
         inst.imm = conversorBinParaDecimal(1,immExtendido); //complemento de 2
         //Fim imm
     

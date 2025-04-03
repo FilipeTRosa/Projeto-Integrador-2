@@ -11,6 +11,13 @@ int main(int argc, char const *argv[])
     mem.mem_inst = (struct instrucao *)malloc(256 *sizeof(struct instrucao));
     mem.tamanho = 256;
     //Fim alocação de memoria de instrucao
+
+    //Alocando memoria de dados
+    struct memoria_dados memDados;
+    memDados.mem_dados = (struct dado*)malloc(256 *sizeof(struct dado));
+    memDados.tamanho = 256;
+    //Fim alocação de memoria de dados
+
     //Variaveis do conversor de bin
     int dec;
     int comp2 = 1;
@@ -20,6 +27,7 @@ int main(int argc, char const *argv[])
     int menu = 0;
     int pc = 2;
     struct instrucao instBuscada;
+
     // CRIANDO BANCO DE REGISTRADORES //
 
     regs *reg = NULL;
@@ -27,12 +35,23 @@ int main(int argc, char const *argv[])
 
     bancoRegistradores = alocaBancoRegistradores();
 
-    for (int i = 0; i <  8; i++) {
+    for (int i = 0; i <= 8; i++) {
         reg = criaRegistrador();
         criaBanco(bancoRegistradores, reg);
     }
 
-    //imprimeBanco(bancoRegistradores); // Testando se o banco de registradores foi criado de maneira correta
+    // TESTANDO BUSCA NO BANCO DE REGISTRADORES //
+
+    int *vetBusca = NULL;
+    vetBusca = buscaBancoRegs(bancoRegistradores, 0, 4, 6, 1);  // Passou no teste, colocar no lugar correto dentro do código
+
+    // TESTANDO A UNIDADE LOGICA ARITMETICA //
+
+    int *resultadoULA = NULL;
+    resultadoULA = processamentoULA(vetBusca, 0);
+
+    salvaDadoReg(bancoRegistradores, resultadoULA, vetBusca);   // Nesse passo está realizando uma soma com a ULA e salvando o resultado em um registrador
+
 
     //Fim config do sistema
 
@@ -53,19 +72,17 @@ int main(int argc, char const *argv[])
         scanf("%d", &menu);
 
         switch (menu) {
-            case 1:        
+            case 1:
                 carregarInstrucoes("programaTestaInstrucoes.mem", &mem);
                 break;
             case 2:
+                carregarDados("dadosTeste.txt", &memDados); 
                 break;
             case 3:
                 //imprime memorias
                 system("clear");
-
-                for (int i = 0; i < 30; i++) { // tamanho 10 só para teste
-                    //teste de impressão
-                    imprimeInstrucao(mem.mem_inst[i]);
-                }
+                imprimeMemInstrucoes(&mem);
+                imprimeMemDados(&memDados);
                 break;
             case 4:
                 system("clear");
