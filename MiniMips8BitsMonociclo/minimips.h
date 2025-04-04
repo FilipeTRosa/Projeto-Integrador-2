@@ -63,7 +63,7 @@ void imprimeMemDados(struct memoria_dados *mem);
 
 int* processamentoULA(int* dadosBancoRegs, int funct);
 int comparaRegs(int* dadosBancoRegs);
-
+void converteDecimalParaBinario(char * palavra, int num);
 void imprimeMemInstrucoes(struct memoria_instrucao *mem);
 int conversorBinParaDecimal (int compDeDois, char * palavra);
 struct instrucao buscaInstrucao(struct memoria_instrucao * memoria, int pc);

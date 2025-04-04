@@ -23,6 +23,10 @@ int main(int argc, char const *argv[])
     int comp2 = 1;
     //Fim conversor
     
+    //Variaveis de teste
+    char palavra[17];
+    //FIm testes
+
     //Configuracao de variaveis do sistema
     int menu = 0;
     int pc = 2;
@@ -89,6 +93,9 @@ int main(int argc, char const *argv[])
                 imprimeBanco(bancoRegistradores); // Testando se o banco de registradores foi criado de maneira correta
                 break;
             case 5:
+                imprimeMemInstrucoes(&mem);
+                imprimeMemDados(&memDados);
+                imprimeBanco(bancoRegistradores);
                 break;
             case 6:
                 system("clear");
@@ -100,6 +107,9 @@ int main(int argc, char const *argv[])
                 printf("Valor em decimal sem comp de 2: [%d]\n", dec);
                 break;
             case 7:
+                printf("\n%d\n",(25/2));
+                converteDecimalParaBinario(palavra, -129);
+                printf("\n%s\n", palavra);
                 break;
             case 8:
                 instBuscada = buscaInstrucao(&mem, pc);

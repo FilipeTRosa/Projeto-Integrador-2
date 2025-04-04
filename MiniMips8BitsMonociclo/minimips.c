@@ -115,7 +115,6 @@ void carregarDados(const char *nomeArquivo, struct memoria_dados *memDados){
     fclose(arquivo);
 }
 
-
 void carregarInstrucoes(const char *nomeArquivo, struct memoria_instrucao *mem){
     struct instrucao instrucaoDecodificada;
     FILE *arquivoEntrada = fopen(nomeArquivo, "r");  
@@ -191,6 +190,13 @@ void criaBanco(BRegs* bancoRegs, regs* reg){
     }
 }
 
+void imprimeReg(regs* reg) {
+      printf("\n====================\n");
+      printf("ID: %d\n", reg->id);
+      printf("Valor: %d\n", reg->valor);
+      printf("====================\n");
+  }
+
 void imprimeBanco(BRegs* bancoRegs) {
     regs *aux = bancoRegs->registradores;
 
@@ -199,8 +205,6 @@ void imprimeBanco(BRegs* bancoRegs) {
         aux = aux->prox;
     }
 }
-
- 
 
 void imprimeInstrucao(struct instrucao inst){ 
     printf("Binario: [%s], opcode: [%d], rs: [%d], rt: [%d], rd: [%d], funct: [%d], imm: [%d], addr: [%d]\n",
@@ -309,7 +313,6 @@ void salvaDadoReg(BRegs* bancoRegistradores, int* resultadoULA, int* vetBuscaReg
 
     aux->valor = resultadoULA[0];
 }
-
 
 void getOpcode(const char *palavra, char *opcode){
     strncpy(opcode, palavra + 0, 4);
@@ -435,4 +438,66 @@ struct instrucao decodificaInstrucao(struct instrucao inst){
     }
     
     return inst;
+    
+}
+
+void inverteString(const char *origem, char *destino) {
+    int tamanho = strlen(origem);
+    for (int i = 0; i < tamanho; i++) {
+        destino[i] = origem[tamanho - 1 - i]; 
+    }
+    destino[tamanho] = '\0'; 
+}
+
+void converteDecimalParaBinario(char * palavra, int num){
+    char aux[9];
+    int i = 0;
+    int negativo = (num < 0); // guada 1 para verdadeiro e 0 parra falso
+    //ASCII//
+    // 0 = 48
+    // 1 = 49
+    // ... //
+    
+    if (negativo) {
+        num = -num; // inverte o sinal
+    }
+
+    if (num == 0) {
+        strcpy(palavra, "00000000");
+        return;
+    }
+
+    while (num > 0) {
+        aux[i++] = (num % 2) + '0'; 
+        num /= 2;
+    }
+
+    while (i < 8) {
+        aux[i++] = '0';
+    }
+
+    aux[i] = '\0';
+
+    inverteString(aux, palavra);
+
+    // Se for negativo, aplica complemento de dois
+    if (negativo) {
+        // inverte os bits
+        for (int j = 0; j < 8; j++) {
+            palavra[j] = (palavra[j] == '0') ? '1' : '0';
+        }
+
+        //Soma 1
+        for (int j = 7; j >= 0; j--) {
+            if (palavra[j] == '0') {
+                palavra[j] = '1';
+                break;
+            } else {
+                palavra[j] = '0';
+            }
+        }
+    }
+
+    palavra[8] = '\0'; // Garante que a string está terminada
+
 }
