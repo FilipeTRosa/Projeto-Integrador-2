@@ -270,27 +270,63 @@ int* buscaBancoRegs(BRegs* bancoRegs, int rs, int rt, int rd, int defDest) {
 int* processamentoULA(int* dadosBancoRegs, int funct) {
 
     int* vetResultadoULA = (int *)malloc(3 * sizeof(int));
+    char result[8];
+    char operando1[8];
+    char operando2[8];
 
     vetResultadoULA[2] = comparaRegs(dadosBancoRegs);
 
     switch(funct) {
         case 0:
-            vetResultadoULA[0] = dadosBancoRegs[0] + dadosBancoRegs[1]; 
+            vetResultadoULA[0] = dadosBancoRegs[0] + dadosBancoRegs[1];
+            vetResultadoULA[1] = verificaOverflow(vetResultadoULA[0]);
             break;
         case 2:
             vetResultadoULA[0] = dadosBancoRegs[0] - dadosBancoRegs[1];
+            vetResultadoULA[1] = verificaOverflow(vetResultadoULA[0]);
             break;
         case 4:
-            vetResultadoULA[0] = dadosBancoRegs[0] && dadosBancoRegs[1];
+            converteDecimalParaBinario(operando1, dadosBancoRegs[0]);
+            converteDecimalParaBinario(operando2, dadosBancoRegs[1]);
+
+            for(int i = 0; i < 8; i++) {
+                if(operando1[i] == operando2[i]) {
+                    result[i] = operando1[i];
+                }
+            }
+
+            vetResultadoULA[0] = conversorBinParaDecimal(0, result);
+            vetResultadoULA[1] = verificaOverflow(vetResultadoULA[0]);
             break;
         case 5:
-            vetResultadoULA[0] = dadosBancoRegs[0] || dadosBancoRegs[1]; 
+            converteDecimalParaBinario(operando1, 0);
+            converteDecimalParaBinario(operando2, 0);
+
+            for(int i = 0; i < 8; i++) {
+                if(operando1[i] == 1 || operando2[i] == 1) {
+                    result[i] = 1;
+                } 
+            }
+
+            vetResultadoULA[0] = dadosBancoRegs[0] || dadosBancoRegs[1];
+            vetResultadoULA[1] = verificaOverflow(vetResultadoULA[0]);
             break;
         
     }
 
     return vetResultadoULA;
 }
+
+int verificaOverflow(int opResult) {
+    int flag = 0;
+
+    if(opResult > 127 || opResult < -128) {
+        flag = 1;
+    }
+
+    return flag;
+}
+
 
 int comparaRegs(int* dadosBancoRegs) {
     

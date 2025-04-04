@@ -62,6 +62,7 @@ void imprimeMemDados(struct memoria_dados *mem);
 // ===================== ULA ======================================== //
 
 int* processamentoULA(int* dadosBancoRegs, int funct);
+int verificaOverflow(int opResult);
 int comparaRegs(int* dadosBancoRegs);
 void converteDecimalParaBinario(char * palavra, int num);
 void imprimeMemInstrucoes(struct memoria_instrucao *mem);
