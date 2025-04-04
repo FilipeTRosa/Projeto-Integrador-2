@@ -52,7 +52,7 @@ int main(int argc, char const *argv[])
     // TESTANDO A UNIDADE LOGICA ARITMETICA //
 
     int *resultadoULA = NULL;
-    resultadoULA = processamentoULA(vetBusca, 0);
+    resultadoULA = processamentoULA(vetBusca, 5);
 
     salvaDadoReg(bancoRegistradores, resultadoULA, vetBusca);   // Nesse passo está realizando uma soma com a ULA e salvando o resultado em um registrador
 
