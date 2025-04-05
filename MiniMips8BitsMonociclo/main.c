@@ -29,8 +29,14 @@ int main(int argc, char const *argv[])
 
     //Configuracao de variaveis do sistema
     int menu = 0;
-    int pc = 2;
+    int pc = 0;
     struct instrucao instBuscada;
+    int operando2;
+
+    // CRIANDO CONTROLE //
+
+    CTRL *controle = NULL;
+    controle = criaControle();
 
     // CRIANDO BANCO DE REGISTRADORES //
 
@@ -47,15 +53,11 @@ int main(int argc, char const *argv[])
     // TESTANDO BUSCA NO BANCO DE REGISTRADORES //
 
     int *vetBusca = NULL;
-    vetBusca = buscaBancoRegs(bancoRegistradores, 0, 4, 6, 1);  // Passou no teste, colocar no lugar correto dentro do código
 
     // TESTANDO A UNIDADE LOGICA ARITMETICA //
 
     int *resultadoULA = NULL;
-    resultadoULA = processamentoULA(vetBusca, 5);
-
-    salvaDadoReg(bancoRegistradores, resultadoULA, vetBusca);   // Nesse passo está realizando uma soma com a ULA e salvando o resultado em um registrador
-
+    //resultadoULA = processamentoULA(vetBusca[0], vetBusca[1], 0);
 
     //Fim config do sistema
 
@@ -113,7 +115,12 @@ int main(int argc, char const *argv[])
                 break;
             case 8:
                 instBuscada = buscaInstrucao(&mem, pc);
-                imprimeInstrucao(instBuscada);
+                setSignal(controle, instBuscada.opcode, instBuscada.funct);
+                vetBusca = buscaBancoRegs(bancoRegistradores, instBuscada.rs, instBuscada.rt, instBuscada.rd, controle->regDest);
+                operando2 = fuctionMux(vetBusca[1], instBuscada.imm, controle->srcB);
+                resultadoULA = processamentoULA(vetBusca[0], operando2, controle->ulaOP);
+
+
                 break;
             case 9:
                 decodificaInstrucao(buscaInstrucao(&mem, 5));
