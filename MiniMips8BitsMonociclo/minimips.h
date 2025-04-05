@@ -1,8 +1,9 @@
 typedef struct bancoRegistradores BRegs;
 typedef struct registrador regs;
+typedef struct controle CTRL;
 
 enum classe_inst{
-    tipo_I, tipo_J, tipo_R, tipo_OUTROS
+    tipo_R, tipo_I, tipo_J, tipo_OUTROS
     };
 
 struct instrucao{
@@ -45,6 +46,17 @@ struct registrador
     regs *prox;
 };
 
+struct controle {
+    int regDest;
+    int srcB;
+    int memReg;
+    int ulaOP;
+    int memWrite;
+    int regWrite;
+    int branch;
+};
+
+
 // ================= BANCO DE REGISTRADORES ========================= //
 
 BRegs* alocaBancoRegistradores();
@@ -53,17 +65,20 @@ void criaBanco(BRegs* bancoRegs, regs* reg);
 void imprimeReg(regs* reg);
 void imprimeBanco(BRegs* bancoRegs);
 int* buscaBancoRegs(BRegs* bancoRegs, int rs, int rt, int rd, int defDest);
-void salvaDadoReg(BRegs* bancoRegistradores, int* resultadoULA, int* vetBuscaReg);
+void salvaDadoReg(BRegs* bancoRegistradores, int resultadoULA, int vetBuscaReg);
 
 // ================================================================== //
 void carregarDados(const char *nomeArquivo, struct memoria_dados *memDados);
 void imprimeDado(struct dado dado);
 void imprimeMemDados(struct memoria_dados *mem);
+CTRL* criaControle();
+void setSignal(CTRL* control, int opcode, int funct);
+int fuctionMux(int op1, int op2, int controleULA);
 // ===================== ULA ======================================== //
 
-int* processamentoULA(int* dadosBancoRegs, int funct);
+int* processamentoULA(int op1, int op2, int funct);
 int verificaOverflow(int opResult);
-int comparaRegs(int* dadosBancoRegs);
+int comparaRegs(int op1, int op2);
 void converteDecimalParaBinario(char * palavra, int num);
 void imprimeMemInstrucoes(struct memoria_instrucao *mem);
 int conversorBinParaDecimal (int compDeDois, char * palavra);

@@ -176,7 +176,6 @@ void criaBanco(BRegs* bancoRegs, regs* reg){
         bancoRegs->registradores = reg;
         bancoRegs->registradores->id = bancoRegs->tamanho;
         bancoRegs->tamanho++;
-        bancoRegs->registradores->valor = 1;
     }
     else {
         regs *aux = bancoRegs->registradores;
@@ -239,24 +238,26 @@ void imprimeMemDados(struct memoria_dados *mem){
 
 int* buscaBancoRegs(BRegs* bancoRegs, int rs, int rt, int rd, int defDest) {
     
-    regs* aux = bancoRegs->registradores;
+    regs *aux = bancoRegs->registradores;
     int* vetBusca = (int *)malloc(3 * sizeof(int));
 
     if(defDest == 0) {
         rd = rt;
     }
 
-    while(aux->id != rs) {
+    while(aux != NULL & aux->id != rs) {
         aux = aux->prox;
     }
 
     vetBusca[0] = aux->valor;
+    aux = bancoRegs->registradores;
 
     while(aux->id != rt) {
         aux = aux->prox;
     }
 
     vetBusca[1] = aux->valor;
+    aux = bancoRegs->registradores;
 
     while(aux->id != rd) {
         aux = aux->prox;
@@ -267,27 +268,27 @@ int* buscaBancoRegs(BRegs* bancoRegs, int rs, int rt, int rd, int defDest) {
     return vetBusca;
 }
 
-int* processamentoULA(int* dadosBancoRegs, int funct) {
+int* processamentoULA(int op1, int op2, int funct) {
 
     int* vetResultadoULA = (int *)malloc(3 * sizeof(int));
     char result[8];
     char operando1[8];
     char operando2[8];
 
-    vetResultadoULA[2] = comparaRegs(dadosBancoRegs);
+    vetResultadoULA[2] = comparaRegs(op1, op2);
 
     switch(funct) {
         case 0:
-            vetResultadoULA[0] = dadosBancoRegs[0] + dadosBancoRegs[1];
+            vetResultadoULA[0] = op1 + op2;
+            vetResultadoULA[1] = verificaOverflow(vetResultadoULA[0]);
+            break;
+        case 1:
+            vetResultadoULA[0] = op1 - op2;
             vetResultadoULA[1] = verificaOverflow(vetResultadoULA[0]);
             break;
         case 2:
-            vetResultadoULA[0] = dadosBancoRegs[0] - dadosBancoRegs[1];
-            vetResultadoULA[1] = verificaOverflow(vetResultadoULA[0]);
-            break;
-        case 4:
-            converteDecimalParaBinario(operando1, dadosBancoRegs[0]);
-            converteDecimalParaBinario(operando2, dadosBancoRegs[1]);
+            converteDecimalParaBinario(operando1, op1);
+            converteDecimalParaBinario(operando2, op2);
 
             for(int i = 0; i < 8; i++) {
                 if(operando1[i] == operando2[i]) {
@@ -298,7 +299,7 @@ int* processamentoULA(int* dadosBancoRegs, int funct) {
             vetResultadoULA[0] = conversorBinParaDecimal(0, result);
             vetResultadoULA[1] = verificaOverflow(vetResultadoULA[0]);
             break;
-        case 5:
+        case 3:
             converteDecimalParaBinario(operando1, 0);
             converteDecimalParaBinario(operando2, 0);
 
@@ -308,13 +309,23 @@ int* processamentoULA(int* dadosBancoRegs, int funct) {
                 } 
             }
 
-            vetResultadoULA[0] = dadosBancoRegs[0] || dadosBancoRegs[1];
+            vetResultadoULA[0] = conversorBinParaDecimal(0, result);
             vetResultadoULA[1] = verificaOverflow(vetResultadoULA[0]);
             break;
         
     }
 
     return vetResultadoULA;
+}
+
+int fuctionMux(int op1, int op2, int controleULA) {
+
+    if(controleULA == 0) {
+        return op1;
+    }
+    else if(controleULA == 1) {
+        return op2;
+    }
 }
 
 int verificaOverflow(int opResult) {
@@ -328,26 +339,89 @@ int verificaOverflow(int opResult) {
 }
 
 
-int comparaRegs(int* dadosBancoRegs) {
+int comparaRegs(int op1, int op2) {
     
     int flag = 0;
 
-    if(dadosBancoRegs[0] == dadosBancoRegs[1]) {
+    if((op1 - op2) == 0) {
         flag = 1;
     }
 
     return flag;
 }
 
-void salvaDadoReg(BRegs* bancoRegistradores, int* resultadoULA, int* vetBuscaReg) {
-    
-    regs *aux = bancoRegistradores->registradores;
+void salvaDadoReg(BRegs* bancoRegs, int resultadoULA, int vetBuscaReg) {
+    regs *aux = bancoRegs->registradores;
 
-    while(aux->id != vetBuscaReg[2]) {
+    while(aux->id != vetBuscaReg) {
         aux = aux->prox;
     }
 
-    aux->valor = resultadoULA[0];
+    aux->valor = resultadoULA;
+}
+
+CTRL* criaControle() {
+    CTRL* new_controle = (CTRL *)malloc(sizeof(CTRL));
+    new_controle->regDest = 0;
+    new_controle->srcB = 0;
+    new_controle->memReg = 0;
+    new_controle->ulaOP = 0;
+    new_controle->memWrite = 0;
+    new_controle->regWrite = 0;
+    new_controle->branch = 0;
+
+    return new_controle;
+}
+
+void setSignal(CTRL* control, int opcode, int funct) {
+    
+    switch(opcode) {
+        case 0:
+            if(funct == 0) {
+                control->ulaOP = 0;
+            }
+            else if(funct == 2) {
+                control->ulaOP = 1;
+            }
+            else if(funct == 4) {
+                control->ulaOP = 2;
+            }
+            else if (funct == 5) {
+                control->ulaOP = 3;
+            }
+
+            control->regDest = 1;
+            control->srcB = 0;
+            control->memReg = 0;
+            control->memWrite = 0;
+            control->regWrite = 1;
+            control->branch = 100000;
+            break;
+        case 2:
+            
+            break;
+        case 4:
+            control->regDest = 0;
+            control->srcB = 1;
+            control->memReg = 0;
+            control->memWrite = 0;
+            control->regWrite = 1;
+            control->branch = 1000000000;
+            control->ulaOP = 0;
+            break;
+        case 8:
+
+            break;
+        case 11:
+
+            break;
+        case 15:
+
+            break;
+        default:
+            printf("\nOpcode nao pertence ao conjunto de instrucoes!!\n");
+    }
+
 }
 
 void getOpcode(const char *palavra, char *opcode){
