@@ -611,3 +611,13 @@ void converteDecimalParaBinario(char * palavra, int num){
     palavra[8] = '\0'; // Garante que a string está terminada
 
 }
+
+void step(int *pc, struct memoria_dados *memDados, struct memoria_instrucao *memInst, BRegs *bancoReg, CTRL *controle){
+
+    struct instrucao inst;
+    
+
+
+
+    
+}

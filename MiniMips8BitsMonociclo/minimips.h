@@ -85,6 +85,13 @@ int conversorBinParaDecimal (int compDeDois, char * palavra);
 struct instrucao buscaInstrucao(struct memoria_instrucao * memoria, int pc);
 void carregarInstrucoes(const char *nomeArquivo, struct memoria_instrucao *mem);
 void imprimeInstrucao(struct instrucao inst);
+
+// ===================== STEP ======================================== //
+
+void step(int *pc, struct memoria_dados *memDados, struct memoria_instrucao *memInst, BRegs *bancoReg, CTRL *controle);
+
+
+// ===================== DECODIFICACAO ================================ //
 struct instrucao decodificaInstrucao(struct instrucao inst);
 void getOpcode(const char * palavra, char *opcode);
 void getRs(const char *palavra, char *rs);
@@ -94,3 +101,4 @@ void getFunct(const char *palavra, char *funct);
 void getImm(const char *palavra, char *imm);
 void getAddr(const char *palavra, char *addr);
 void estenderSinalImm(char * imm, char * immExtendido);
+// ================================================================== //
