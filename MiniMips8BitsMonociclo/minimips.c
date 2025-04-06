@@ -614,9 +614,16 @@ void converteDecimalParaBinario(char * palavra, int num){
 
 void step(int *pc, struct memoria_dados *memDados, struct memoria_instrucao *memInst, BRegs *bancoReg, CTRL *controle){
 
+    //setando variaveis de funcinamento
     struct instrucao inst;
-    
+    int *vetBusca = NULL;
+    int *resultadoULA = NULL;
+    //fim configuração.
 
+    // buscar instrução
+    inst = buscaInstrucao(memInst, *pc);
+    setSignal(controle, inst.opcode, inst.funct);
+    
 
 
     

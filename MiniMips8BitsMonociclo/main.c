@@ -10,12 +10,14 @@ int main(int argc, char const *argv[])
     struct memoria_instrucao mem;
     mem.mem_inst = (struct instrucao *)malloc(256 *sizeof(struct instrucao));
     mem.tamanho = 256;
+    char arquivoMemInstrucoes[256];
     //Fim alocação de memoria de instrucao
 
     //Alocando memoria de dados
     struct memoria_dados memDados;
     memDados.mem_dados = (struct dado*)malloc(256 *sizeof(struct dado));
     memDados.tamanho = 256;
+    char arquivoMemDados[256];
     //Fim alocação de memoria de dados
 
     //Variaveis do conversor de bin
@@ -75,14 +77,23 @@ int main(int argc, char const *argv[])
         printf("10 - Volta uma instrucao (Back)\n");
         printf("0 - Sair\n");
         printf("Escolha uma opcao: ");
+        setbuf(stdin, NULL);
         scanf("%d", &menu);
 
         switch (menu) {
             case 1:
-                carregarInstrucoes("programaTestaInstrucoes.mem", &mem);
+                
+                printf("Digite o nome do arquivo de memoria.\n");
+                setbuf(stdin, NULL);
+                scanf("%[^\n]s", arquivoMemInstrucoes);
+
+                carregarInstrucoes(arquivoMemInstrucoes, &mem);
                 break;
             case 2:
-                carregarDados("dadosTeste.txt", &memDados); 
+                printf("Digite o nome do arquivo de memoria.\n");
+                setbuf(stdin, NULL);
+                scanf("%[^\n]s", arquivoMemDados);
+                carregarDados(arquivoMemInstrucoes, &memDados); 
                 break;
             case 3:
                 //imprime memorias
