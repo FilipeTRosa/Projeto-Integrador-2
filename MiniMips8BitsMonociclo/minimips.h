@@ -65,18 +65,22 @@ void criaBanco(BRegs* bancoRegs, regs* reg);
 void imprimeReg(regs* reg);
 void imprimeBanco(BRegs* bancoRegs);
 int* buscaBancoRegs(BRegs* bancoRegs, int rs, int rt, int rd, int defDest);
-void salvaDadoReg(BRegs* bancoRegistradores, int resultadoULA, int vetBuscaReg);
+void salvaDadoReg(BRegs* bancoRegistradores, int resultadoULA, int vetBuscaReg,  int sinalControle);
 
-// ================================================================== //
+// ================== MEMORIA DE DADOS  ============================= //
 void carregarDados(const char *nomeArquivo, struct memoria_dados *memDados);
 void imprimeDado(struct dado dado);
 void imprimeMemDados(struct memoria_dados *mem);
+void insereMemDados(struct memoria_dados *mem, int endereco, int valor, int sinalControle);
+int getDado(struct memoria_dados *mem, int endereco);
+// =================== CONTROLE ===================================== //
 CTRL* criaControle();
 void setSignal(CTRL* control, int opcode, int funct);
 int fuctionMux(int op1, int op2, int controleULA);
+const char* imprimeTipo(enum classe_inst tipo);
 // ===================== ULA ======================================== //
-
-int* processamentoULA(int op1, int op2, int funct);
+void imprimeULA(int *resultadoULA);
+int* processamentoULA(int op1, int op2, int ulaOP);
 int verificaOverflow(int opResult);
 int comparaRegs(int op1, int op2);
 void converteDecimalParaBinario(char * palavra, int num);
@@ -86,12 +90,13 @@ struct instrucao buscaInstrucao(struct memoria_instrucao * memoria, int pc);
 void carregarInstrucoes(const char *nomeArquivo, struct memoria_instrucao *mem);
 void imprimeInstrucao(struct instrucao inst);
 
-// ===================== STEP ======================================== //
+// ===================== STEP ======================================= //
 
+void imprimeControle(CTRL *controle);
 void step(int *pc, struct memoria_dados *memDados, struct memoria_instrucao *memInst, BRegs *bancoReg, CTRL *controle);
 
 
-// ===================== DECODIFICACAO ================================ //
+// ===================== DECODIFICACAO ============================== //
 struct instrucao decodificaInstrucao(struct instrucao inst);
 void getOpcode(const char * palavra, char *opcode);
 void getRs(const char *palavra, char *rs);

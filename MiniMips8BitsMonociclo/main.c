@@ -93,7 +93,7 @@ int main(int argc, char const *argv[])
                 printf("Digite o nome do arquivo de memoria.\n");
                 setbuf(stdin, NULL);
                 scanf("%[^\n]s", arquivoMemDados);
-                carregarDados(arquivoMemInstrucoes, &memDados); 
+                carregarDados(arquivoMemDados, &memDados); 
                 break;
             case 3:
                 //imprime memorias
@@ -125,12 +125,16 @@ int main(int argc, char const *argv[])
                 printf("\n%s\n", palavra);
                 break;
             case 8:
+                //pc = 0;
+                step(&pc, &memDados, &mem, bancoRegistradores, controle);
+                printf("PC -> [%d]", pc);
+                /**
                 instBuscada = buscaInstrucao(&mem, pc);
                 setSignal(controle, instBuscada.opcode, instBuscada.funct);
                 vetBusca = buscaBancoRegs(bancoRegistradores, instBuscada.rs, instBuscada.rt, instBuscada.rd, controle->regDest);
                 operando2 = fuctionMux(vetBusca[1], instBuscada.imm, controle->srcB);
                 resultadoULA = processamentoULA(vetBusca[0], operando2, controle->ulaOP);
-
+            */
 
                 break;
             case 9:
@@ -138,7 +142,9 @@ int main(int argc, char const *argv[])
                 break;
             case 10:
                 break;
-            case 0: printf("Saindo...\n"); 
+            case 0: 
+                system("clear");
+                printf("Saindo...\n"); 
                 break;
             default: printf("Opção inválida! Tente novamente.\n");
         }
