@@ -34,6 +34,9 @@ int main(int argc, char const *argv[])
     int pc = 0;
     struct instrucao instBuscada;
     int operando2;
+    descPilha* pilha = NULL;
+    noInstruc* noPilha = NULL;
+    pilha = criaPilha();
 
     // CRIANDO CONTROLE //
 
@@ -125,17 +128,10 @@ int main(int argc, char const *argv[])
                 printf("\n%s\n", palavra);
                 break;
             case 8:
-                //pc = 0;
+                noPilha = criaNodo(bancoRegistradores, &mem, &memDados, pc);
+                inserePilha(pilha, noPilha);
                 step(&pc, &memDados, &mem, bancoRegistradores, controle);
                 printf("PC -> [%d]", pc);
-                /**
-                instBuscada = buscaInstrucao(&mem, pc);
-                setSignal(controle, instBuscada.opcode, instBuscada.funct);
-                vetBusca = buscaBancoRegs(bancoRegistradores, instBuscada.rs, instBuscada.rt, instBuscada.rd, controle->regDest);
-                operando2 = fuctionMux(vetBusca[1], instBuscada.imm, controle->srcB);
-                resultadoULA = processamentoULA(vetBusca[0], operando2, controle->ulaOP);
-            */
-
                 break;
             case 9:
                 decodificaInstrucao(buscaInstrucao(&mem, 5));

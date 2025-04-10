@@ -466,6 +466,46 @@ void setSignal(CTRL* control, int opcode, int funct) {
 
 }
 
+descPilha* criaPilha() {
+
+    descPilha *newPilha = (descPilha *)malloc(sizeof(descPilha));
+
+    newPilha->instrucoes = NULL;
+    newPilha->tamanho = 0;
+
+    return newPilha;
+}
+
+noInstruc* criaNodo(BRegs* bancoRegs, memInstruc* memoriaInstrucao, memDados* memoriaDados, int programCounter) {
+
+    noInstruc *newInstrucao = (noInstruc *)malloc(sizeof(noInstruc));
+
+    newInstrucao->bancoRegs = bancoRegs;
+    newInstrucao->memoriaInstrucao = memoriaInstrucao;
+    newInstrucao->memoriaDados = memoriaDados;
+    newInstrucao->pc = programCounter;
+    newInstrucao->prox = NULL;
+
+    return newInstrucao;
+}
+
+void inserePilha(descPilha* pilha, noInstruc* instruc) {
+
+    if(pilha->tamanho == 0) {
+
+        pilha->instrucoes = instruc;
+        pilha->tamanho++;
+    }
+    else {
+
+        noInstruc *aux = pilha->instrucoes;
+        instruc->prox = aux;
+        pilha->instrucoes = instruc;
+        pilha->tamanho++;
+    }
+
+}
+
 void imprimeControle(CTRL *controle){
     printf("\nControle\n");
     printf("regDest: [%d], srcB: [%d], memReg: [%d], ulaOP: [%d], memWrite: [%d], regWrite: [%d], branch: [%d]\n",
