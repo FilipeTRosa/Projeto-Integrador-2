@@ -127,6 +127,20 @@ int getDado(struct memoria_dados *mem, int endereco){
     return valor;
 }
 
+void salvarMemoriaEmArquivo(const char *nomeArquivo, struct memoria_dados *memDados) {
+    FILE *arquivo = fopen(nomeArquivo, "w"); // "w" cria ou sobrescreve
+    if (arquivo == NULL) {
+        perror("Erro ao abrir o arquivo para escrita");
+        return;
+    }
+
+    for (int i = 0; i < memDados->tamanho; i++) {
+        fprintf(arquivo, "%d\n", memDados->mem_dados[i].dado);
+    }
+
+    fclose(arquivo);
+}
+
 void carregarInstrucoes(const char *nomeArquivo, struct memoria_instrucao *mem){
     struct instrucao instrucaoDecodificada;
     FILE *arquivoEntrada = fopen(nomeArquivo, "r");  

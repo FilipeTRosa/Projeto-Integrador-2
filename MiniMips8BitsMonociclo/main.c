@@ -123,24 +123,33 @@ int main(int argc, char const *argv[])
                 printf("Valor em decimal sem comp de 2: [%d]\n", dec);
                 break;
             case 7:
-                printf("\n%d\n",(25/2));
-                converteDecimalParaBinario(palavra, -129);
-                printf("\n%s\n", palavra);
+                //salvar .dat
+                void salvarMemoriaEmArquivo(const char *nomeArquivo, struct memoria_dados *memDados);
+                
                 break;
             case 8:
                 //pc = 29;
                 //inserir no na pilha
-
-                noPilha = criaNodo(bancoRegistradores, &mem, &memDados, pc);
-                inserePilha(pilha, noPilha);
-
-                step(&pc, &memDados, &mem, bancoRegistradores, controle);
-                printf("PC -> [%d]", pc);
+                if (BRegs->reg[7].valor == 63) //condição DEFAULT de parada do programa
+                {
+                    printf("Programa finalizado com sucesso!\n");
+                    //rodar um back para ficar no último estado.
+                    goto caso_10;
+                    break;
+                }else
+                {
+                    noPilha = criaNodo(bancoRegistradores, &mem, &memDados, pc);
+                    inserePilha(pilha, noPilha);
+    
+                    step(&pc, &memDados, &mem, bancoRegistradores, controle);
+                    printf("PC -> [%d]", pc);
+                }
                 break;
             case 9:
                 decodificaInstrucao(buscaInstrucao(&mem, 5));
                 break;
             case 10:
+            caso_10:
                 break;
             case 0: 
                 system("clear");
