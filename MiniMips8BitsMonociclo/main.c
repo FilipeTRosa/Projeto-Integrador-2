@@ -70,11 +70,11 @@ int main(int argc, char const *argv[])
         printf("3 - Imprimir memorias (instrucoes e dados)\n");
         printf("4 - Imprimir banco de registradores\n");
         printf("5 - Imprimir todo o simulador (registradores e memorias)\n");
-        printf("6 - Converter binario .asm\n"); //// TESTE de funcao
-        printf("7 - Salvar .dat\n");
-        printf("8 - Executa Programa (run)\n");
+        printf("6 - Salvar .asm\n");//
+        printf("7 - Salvar .dat\n");// 
+        printf("8 - Executa Programa (run)\n");// estudar forma de parada... FIM do programa 
         printf("9 - Executa uma instrucao (Step)\n");
-        printf("10 - Volta uma instrucao (Back)\n");
+        printf("10 - Volta uma instrucao (Back)\n");// 
         printf("0 - Sair\n");
         printf("Escolha uma opcao: ");
         setbuf(stdin, NULL);
@@ -125,17 +125,10 @@ int main(int argc, char const *argv[])
                 printf("\n%s\n", palavra);
                 break;
             case 8:
-                //pc = 0;
+                //pc = 29;
+                //inserir no na pilha
                 step(&pc, &memDados, &mem, bancoRegistradores, controle);
                 printf("PC -> [%d]", pc);
-                /**
-                instBuscada = buscaInstrucao(&mem, pc);
-                setSignal(controle, instBuscada.opcode, instBuscada.funct);
-                vetBusca = buscaBancoRegs(bancoRegistradores, instBuscada.rs, instBuscada.rt, instBuscada.rd, controle->regDest);
-                operando2 = fuctionMux(vetBusca[1], instBuscada.imm, controle->srcB);
-                resultadoULA = processamentoULA(vetBusca[0], operando2, controle->ulaOP);
-            */
-
                 break;
             case 9:
                 decodificaInstrucao(buscaInstrucao(&mem, 5));

@@ -56,6 +56,12 @@ struct controle {
     int branch;
 };
 
+struct noPilha{
+    int pc;
+    BRegs bancoReg;
+    //mem dados;
+    //ultima instrucao;
+};
 
 // ================= BANCO DE REGISTRADORES ========================= //
 
