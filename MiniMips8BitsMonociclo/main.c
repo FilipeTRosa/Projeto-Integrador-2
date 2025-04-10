@@ -10,12 +10,14 @@ int main(int argc, char const *argv[])
     struct memoria_instrucao mem;
     mem.mem_inst = (struct instrucao *)malloc(256 *sizeof(struct instrucao));
     mem.tamanho = 256;
+    char arquivoMemInstrucoes[256];
     //Fim alocação de memoria de instrucao
 
     //Alocando memoria de dados
     struct memoria_dados memDados;
     memDados.mem_dados = (struct dado*)malloc(256 *sizeof(struct dado));
     memDados.tamanho = 256;
+    char arquivoMemDados[256];
     //Fim alocação de memoria de dados
 
     //Variaveis do conversor de bin
@@ -23,10 +25,23 @@ int main(int argc, char const *argv[])
     int comp2 = 1;
     //Fim conversor
     
+    //Variaveis de teste
+    char palavra[17];
+    //FIm testes
+
     //Configuracao de variaveis do sistema
     int menu = 0;
-    int pc = 2;
+    int pc = 0;
     struct instrucao instBuscada;
+    int operando2;
+    descPilha* pilha = NULL;
+    noInstruc* noPilha = NULL;
+    pilha = criaPilha();
+
+    // CRIANDO CONTROLE //
+
+    CTRL *controle = NULL;
+    controle = criaControle();
 
     // CRIANDO BANCO DE REGISTRADORES //
 
@@ -43,15 +58,11 @@ int main(int argc, char const *argv[])
     // TESTANDO BUSCA NO BANCO DE REGISTRADORES //
 
     int *vetBusca = NULL;
-    vetBusca = buscaBancoRegs(bancoRegistradores, 0, 4, 6, 1);  // Passou no teste, colocar no lugar correto dentro do código
 
     // TESTANDO A UNIDADE LOGICA ARITMETICA //
 
     int *resultadoULA = NULL;
-    resultadoULA = processamentoULA(vetBusca, 0);
-
-    salvaDadoReg(bancoRegistradores, resultadoULA, vetBusca);   // Nesse passo está realizando uma soma com a ULA e salvando o resultado em um registrador
-
+    //resultadoULA = processamentoULA(vetBusca[0], vetBusca[1], 0);
 
     //Fim config do sistema
 
@@ -62,21 +73,30 @@ int main(int argc, char const *argv[])
         printf("3 - Imprimir memorias (instrucoes e dados)\n");
         printf("4 - Imprimir banco de registradores\n");
         printf("5 - Imprimir todo o simulador (registradores e memorias)\n");
-        printf("6 - Converter binario .asm\n"); //// TESTE de funcao
-        printf("7 - Salvar .dat\n");
-        printf("8 - Executa Programa (run)\n");
+        printf("6 - Salvar .asm\n");//
+        printf("7 - Salvar .dat\n");// 
+        printf("8 - Executa Programa (run)\n");// estudar forma de parada... FIM do programa 
         printf("9 - Executa uma instrucao (Step)\n");
-        printf("10 - Volta uma instrucao (Back)\n");
+        printf("10 - Volta uma instrucao (Back)\n");// 
         printf("0 - Sair\n");
         printf("Escolha uma opcao: ");
+        setbuf(stdin, NULL);
         scanf("%d", &menu);
 
         switch (menu) {
             case 1:
-                carregarInstrucoes("programaTestaInstrucoes.mem", &mem);
+                
+                printf("Digite o nome do arquivo de memoria.\n");
+                setbuf(stdin, NULL);
+                scanf("%[^\n]s", arquivoMemInstrucoes);
+
+                carregarInstrucoes(arquivoMemInstrucoes, &mem);
                 break;
             case 2:
-                carregarDados("dadosTeste.txt", &memDados); 
+                printf("Digite o nome do arquivo de memoria.\n");
+                setbuf(stdin, NULL);
+                scanf("%[^\n]s", arquivoMemDados);
+                carregarDados(arquivoMemDados, &memDados); 
                 break;
             case 3:
                 //imprime memorias
@@ -89,6 +109,9 @@ int main(int argc, char const *argv[])
                 imprimeBanco(bancoRegistradores); // Testando se o banco de registradores foi criado de maneira correta
                 break;
             case 5:
+                imprimeMemInstrucoes(&mem);
+                imprimeMemDados(&memDados);
+                imprimeBanco(bancoRegistradores);
                 break;
             case 6:
                 system("clear");
@@ -100,17 +123,28 @@ int main(int argc, char const *argv[])
                 printf("Valor em decimal sem comp de 2: [%d]\n", dec);
                 break;
             case 7:
+                printf("\n%d\n",(25/2));
+                converteDecimalParaBinario(palavra, -129);
+                printf("\n%s\n", palavra);
                 break;
             case 8:
-                instBuscada = buscaInstrucao(&mem, pc);
-                imprimeInstrucao(instBuscada);
+                //pc = 29;
+                //inserir no na pilha
+
+                noPilha = criaNodo(bancoRegistradores, &mem, &memDados, pc);
+                inserePilha(pilha, noPilha);
+
+                step(&pc, &memDados, &mem, bancoRegistradores, controle);
+                printf("PC -> [%d]", pc);
                 break;
             case 9:
                 decodificaInstrucao(buscaInstrucao(&mem, 5));
                 break;
             case 10:
                 break;
-            case 0: printf("Saindo...\n"); 
+            case 0: 
+                system("clear");
+                printf("Saindo...\n"); 
                 break;
             default: printf("Opção inválida! Tente novamente.\n");
         }
