@@ -203,7 +203,7 @@ void criaBanco(BRegs* bancoRegs, regs* reg){
 }
 
 void imprimeReg(regs* reg) {
-      printf("\n====================\n");
+      printf("====================\n");
       printf("ID: %d\n", reg->id);
       printf("Valor: %d\n", reg->valor);
       printf("====================\n");
@@ -298,7 +298,7 @@ int* processamentoULA(int op1, int op2, int ulaOP) {
     char operando1[8];
     char operando2[8];
 
-    vetResultadoULA[2] = comparaRegs(op1, op2);
+    //vetResultadoULA[2] = comparaRegs(op1, op2);
 
     switch(ulaOP) {
         case 0:
@@ -338,7 +338,9 @@ int* processamentoULA(int op1, int op2, int ulaOP) {
             vetResultadoULA[0] = conversorBinParaDecimal(0, result);
             vetResultadoULA[1] = verificaOverflow(vetResultadoULA[0]);
             break;
-        
+        case 6://beq
+            vetResultadoULA[2] = comparaRegs(op1, op2);
+            break;
     }
 
     return vetResultadoULA;
@@ -426,7 +428,14 @@ void setSignal(CTRL* control, int opcode, int funct) {
             control->regWrite = 1;
             control->branch = 100000;
             break;
-        case 2:
+        case 2://jump
+            control->regDest = 0;
+            control->srcB = 0;
+            control->memReg = 0;
+            control->memWrite = 0;
+            control->regWrite = 0;
+            control->branch = 0;
+            control->ulaOP = 0;
             
             break;
         case 4: //ADDI
@@ -438,8 +447,14 @@ void setSignal(CTRL* control, int opcode, int funct) {
             control->branch = 1000000000;
             control->ulaOP = 1;
             break;
-        case 8: 
-            
+        case 8: //BEQ
+            control->regDest = 0;
+            control->srcB = 0;
+            control->memReg = 0;
+            control->memWrite = 0;
+            control->regWrite = 0;
+            control->branch = 1;
+            control->ulaOP = 6;
             break;
         case 11://LW
             control->regDest = 0;
@@ -733,49 +748,75 @@ void step(int *pc, struct memoria_dados *memDados, struct memoria_instrucao *mem
     //imprimeBanco(bancoReg);0
     // buscar instrução
     instBuscada = buscaInstrucao(memInst, *pc);
-    printf("\n\nPC: [%d]\n", *pc);
-    printf("Instrução que vai ser Executada.\n");
-    imprimeInstrucao(instBuscada);
-    setSignal(controle, instBuscada.opcode, instBuscada.funct);
-    imprimeControle(controle);
-    switch (instBuscada.tipo_inst)
+    if (strlen(instBuscada.inst_char) > 1)
     {
-    case tipo_R:
-        /* code */
-        vetBusca = buscaBancoRegs(bancoReg, instBuscada.rs, instBuscada.rt, instBuscada.rd, controle->regDest); // retorna [[rs][rt][rd]]
-        operando2 = fuctionMux(vetBusca[1], instBuscada.imm, controle->srcB);// Mux para saber de onde vem o op2 da ula ->> REG/IMM <<-
-        resultadoULA = processamentoULA(vetBusca[0], operando2, controle->ulaOP);// retorna [[resultado][overflow][comparaREG]]
-        imprimeULA(resultadoULA);
-        salvaDadoReg(bancoReg,resultadoULA[0], vetBusca[2], controle->regWrite);
-        imprimeBanco(bancoReg);
-        *pc = *pc + 1;
-        break;
-    case tipo_I:
-        //teste addi
-        vetBusca = buscaBancoRegs(bancoReg, instBuscada.rs, instBuscada.rt, instBuscada.rd, controle->regDest); // retorna [[rs][rt][rd]]
-        operando2 = fuctionMux(vetBusca[1], instBuscada.imm, controle->srcB);// Mux para saber de onde vem o op2 da ula ->> REG/IMM <<-
-        resultadoULA = processamentoULA(vetBusca[0], operando2, controle->ulaOP);// retorna [[resultado][overflow][comparaREG]]
-        imprimeULA(resultadoULA);
-        if (controle->memReg == 1 && controle->regWrite == 1) 
+        //printf("\n\nPC: [%d]\n", *pc);
+        //printf("Instrução que vai ser Executada.\n");
+        //imprimeInstrucao(instBuscada);
+        setSignal(controle, instBuscada.opcode, instBuscada.funct);
+        //imprimeControle(controle);
+        switch (instBuscada.tipo_inst)
         {
-            //se for ADDI
+        case tipo_R:
+            /* code */
+            vetBusca = buscaBancoRegs(bancoReg, instBuscada.rs, instBuscada.rt, instBuscada.rd, controle->regDest); // retorna [[rs][rt][rd]]
+            operando2 = fuctionMux(vetBusca[1], instBuscada.imm, controle->srcB);// Mux para saber de onde vem o op2 da ula ->> REG/IMM <<-
+            resultadoULA = processamentoULA(vetBusca[0], operando2, controle->ulaOP);// retorna [[resultado][overflow][comparaREG]]
+            //imprimeULA(resultadoULA);
+            //testar flag antes
             salvaDadoReg(bancoReg,resultadoULA[0], vetBusca[2], controle->regWrite);
+            imprimeBanco(bancoReg);
+            *pc = *pc + 1;
+            break;
+        case tipo_I:
+            printf("entrou no IIIII");
+            if (instBuscada.opcode == 8) //beq
+            {
+                printf("entrou no BEQ");
+                vetBusca = buscaBancoRegs(bancoReg, instBuscada.rs, instBuscada.rt, instBuscada.rd, controle->regDest); // retorna [[rs][rt][rd]]
+                operando2 = fuctionMux(vetBusca[1], instBuscada.imm, controle->srcB);// Mux para saber de onde vem o op2 da ula ->> REG/IMM <<-
+                resultadoULA = processamentoULA(vetBusca[0], operando2, controle->ulaOP);// retorna [[resultado][overflow][comparaREG]]
+                if (resultadoULA[2] == 1 && controle->branch == 1)
+                {
+                    printf("entrou no iffff");
+                    *pc = *pc + instBuscada.imm + 1;
+                    break;
+                }else
+                {
+                    printf("entrou no ELSE");
+                    *pc = *pc + 1;
+                    break;
+                }    
+            }
+            //teste addi
+            vetBusca = buscaBancoRegs(bancoReg, instBuscada.rs, instBuscada.rt, instBuscada.rd, controle->regDest); // retorna [[rs][rt][rd]]
+            operando2 = fuctionMux(vetBusca[1], instBuscada.imm, controle->srcB);// Mux para saber de onde vem o op2 da ula ->> REG/IMM <<-
+            resultadoULA = processamentoULA(vetBusca[0], operando2, controle->ulaOP);// retorna [[resultado][overflow][comparaREG]]
+            imprimeULA(resultadoULA);
+            if (controle->memReg == 1 && controle->regWrite == 1) 
+            {
+                //se for ADDI
+                salvaDadoReg(bancoReg,resultadoULA[0], vetBusca[2], controle->regWrite);
+            }
+            if (controle->memReg == 0 && controle->regWrite == 1)
+            {
+                //Se for LW
+                salvaDadoReg(bancoReg, getDado(memDados, resultadoULA[0]), vetBusca[2], controle->regWrite);
+            }   
+            imprimeBanco(bancoReg);
+            //se for SW só salva na mem se memWrite = 1
+            insereMemDados(memDados, resultadoULA[0], vetBusca[1], controle->memWrite);
+            *pc = *pc + 1;
+            break;
+        case tipo_J:
+            *pc = 1 + instBuscada.addr;
+            break;
+        default:
+            break;
         }
-        if (controle->memReg == 0 && controle->regWrite == 1)
-        {
-            //Se for LW
-            salvaDadoReg(bancoReg, getDado(memDados, resultadoULA[0]), vetBusca[2], controle->regWrite);
-        }   
-        imprimeBanco(bancoReg);
-        //se for SW só salva na mem se memWrite = 1
-        insereMemDados(memDados, resultadoULA[0], vetBusca[1], controle->memWrite);
-        *pc = *pc + 1;
-        break;
-    
-    default:
-        break;
+    }else
+    {
+        printf("\n Instrucao invalida.\n");
     }
-
-
     
 }
