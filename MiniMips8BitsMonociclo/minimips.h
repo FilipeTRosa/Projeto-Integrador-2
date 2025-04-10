@@ -1,6 +1,10 @@
 typedef struct bancoRegistradores BRegs;
 typedef struct registrador regs;
 typedef struct controle CTRL;
+typedef struct memoria_instrucao memInstruc;
+typedef struct memoria_dados memDados;
+typedef struct nodoInstrucao noInstruc;
+typedef struct descPilhaInstrucao descPilha;
 
 enum classe_inst{
     tipo_R, tipo_I, tipo_J, tipo_OUTROS
@@ -62,6 +66,27 @@ struct noPilha{
     //mem dados;
     //ultima instrucao;
 };
+
+struct nodoInstrucao {
+    BRegs* bancoRegs;
+    memInstruc* memoriaInstrucao;
+    memDados* memoriaDados;
+    int pc;
+    noInstruc *prox;
+};
+
+struct descPilhaInstrucao {
+    noInstruc* instrucoes;
+    int tamanho;
+};
+
+
+// ================= CONFIGURAÇÕES DA FUNÇÃO BACK =================== //
+
+descPilha* criaPilha();
+noInstruc* criaNodo(BRegs* bancoRegs, memInstruc* memoriaInstrucao, memDados* memoriaDados, int programCounter);
+void inserePilha(descPilha* pilha, noInstruc* instruc);
+
 
 // ================= BANCO DE REGISTRADORES ========================= //
 

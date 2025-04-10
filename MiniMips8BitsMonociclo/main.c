@@ -34,6 +34,9 @@ int main(int argc, char const *argv[])
     int pc = 0;
     struct instrucao instBuscada;
     int operando2;
+    descPilha* pilha = NULL;
+    noInstruc* noPilha = NULL;
+    pilha = criaPilha();
 
     // CRIANDO CONTROLE //
 
@@ -127,6 +130,10 @@ int main(int argc, char const *argv[])
             case 8:
                 //pc = 29;
                 //inserir no na pilha
+
+                noPilha = criaNodo(bancoRegistradores, &mem, &memDados, pc);
+                inserePilha(pilha, noPilha);
+
                 step(&pc, &memDados, &mem, bancoRegistradores, controle);
                 printf("PC -> [%d]", pc);
                 break;
