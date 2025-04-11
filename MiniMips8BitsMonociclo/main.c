@@ -17,7 +17,7 @@ int main(int argc, char const *argv[])
     struct memoria_dados memDados;
     memDados.mem_dados = (struct dado*)malloc(256 *sizeof(struct dado));
     memDados.tamanho = 256;
-    char arquivoMemDados[256];
+    char arquivoMemDados[50];
     //Fim alocação de memoria de dados
 
     //Variaveis do conversor de bin
@@ -37,7 +37,9 @@ int main(int argc, char const *argv[])
     descPilha* pilha = NULL;
     noInstruc* noPilha = NULL;
     pilha = criaPilha();
-
+    int* buscaReg = NULL;
+    char arquivoAsm[50];
+    int parada = 1;
     // CRIANDO CONTROLE //
 
     CTRL *controle = NULL;
@@ -115,41 +117,39 @@ int main(int argc, char const *argv[])
                 break;
             case 6:
                 system("clear");
-                comp2 = 1;
-                dec = conversorBinParaDecimal(comp2,mem.mem_inst[2].inst_char);
-                printf("Valor em decimal com comp de 2: [%d]\n", dec);
-                comp2 = 0;
-                dec = conversorBinParaDecimal(comp2,mem.mem_inst[2].inst_char);
-                printf("Valor em decimal sem comp de 2: [%d]\n", dec);
+                printf("Digite o nome do arquivo para salvar.\n");
+                setbuf(stdin, NULL);
+                scanf("%[^\n]s", arquivoAsm);
+                salvarAsm(arquivoAsm, &mem);
+
                 break;
             case 7:
                 //salvar .dat
-                void salvarMemoriaEmArquivo(const char *nomeArquivo, struct memoria_dados *memDados);
+                system("clear");
+                printf("Digite o nome do arquivo para salvar.\n");
+                setbuf(stdin, NULL);
+                scanf("%[^\n]s", arquivoMemDados);
+                salvarMemoriaEmArquivo(arquivoMemDados, &memDados);
                 
                 break;
             case 8:
-                //pc = 29;
-                //inserir no na pilha
-                if (BRegs->reg[7].valor == 63) //condição DEFAULT de parada do programa
+                while (parada)
                 {
-                    printf("Programa finalizado com sucesso!\n");
-                    //rodar um back para ficar no último estado.
-                    goto caso_10;
-                    break;
-                }else
-                {
-                    noPilha = criaNodo(bancoRegistradores, &mem, &memDados, pc);
-                    inserePilha(pilha, noPilha);
-    
-                    step(&pc, &memDados, &mem, bancoRegistradores, controle);
-                    printf("PC -> [%d]", pc);
+                    step(&parada, &pc, &memDados, &mem, bancoRegistradores, controle);
                 }
                 break;
             case 9:
-                decodificaInstrucao(buscaInstrucao(&mem, 5));
+                    //tem que mudar isso para dentro da funcao.
+                    //noPilha = criaNodo(bancoRegistradores, &mem, &memDados, pc);
+                    //inserePilha(pilha, noPilha);
+
+                    step(&parada, &pc, &memDados, &mem, bancoRegistradores, controle);
+                    printf("Proximo PC *teorico* -> [%d] ** pode vir Jump **\n", pc);
+                
                 break;
             case 10:
             caso_10:
+                printf("\nBACK\n");
                 break;
             case 0: 
                 system("clear");
