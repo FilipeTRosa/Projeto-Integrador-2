@@ -34,12 +34,12 @@ int main(int argc, char const *argv[])
     int pc = 0;
     struct instrucao instBuscada;
     int operando2;
-    descPilha* pilha = NULL;
-    noInstruc* noPilha = NULL;
-    pilha = criaPilha();
     int* buscaReg = NULL;
     char arquivoAsm[50];
     int parada = 1;
+
+    descPilha* pilha = criarPilha();
+
     // CRIANDO CONTROLE //
 
     CTRL *controle = NULL;
@@ -135,7 +135,7 @@ int main(int argc, char const *argv[])
             case 8:
                 while (parada)
                 {
-                    step(&parada, &pc, &memDados, &mem, bancoRegistradores, controle);
+                    step(&parada, &pc, &memDados, &mem, bancoRegistradores, controle, pilha);
                 }
                 break;
             case 9:
@@ -143,13 +143,17 @@ int main(int argc, char const *argv[])
                     //noPilha = criaNodo(bancoRegistradores, &mem, &memDados, pc);
                     //inserePilha(pilha, noPilha);
 
-                    step(&parada, &pc, &memDados, &mem, bancoRegistradores, controle);
+                    step(&parada, &pc, &memDados, &mem, bancoRegistradores, controle, pilha);
                     printf("Proximo PC *teorico* -> [%d] ** pode vir Jump **\n", pc);
                 
                 break;
             case 10:
-            caso_10:
                 printf("\nBACK\n");
+                nodoPilha *voltaInstrucao = removePilha(pilha);
+                bancoRegistradores = voltaInstrucao->bancoRegs;
+                pc = voltaInstrucao->pc;
+                memDados = *voltaInstrucao->memoriaDados;
+
                 break;
             case 0: 
                 system("clear");
