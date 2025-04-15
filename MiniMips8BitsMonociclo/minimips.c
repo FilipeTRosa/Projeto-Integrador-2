@@ -532,46 +532,6 @@ void setSignal(CTRL* control, int opcode, int funct) {
 
 }
 
-descPilha* criaPilha() {
-
-    descPilha *newPilha = (descPilha *)malloc(sizeof(descPilha));
-
-    newPilha->instrucoes = NULL;
-    newPilha->tamanho = 0;
-
-    return newPilha;
-}
-
-noInstruc* criaNodo(BRegs* bancoRegs, memInstruc* memoriaInstrucao, memDados* memoriaDados, int programCounter) {
-
-    noInstruc *newInstrucao = (noInstruc *)malloc(sizeof(noInstruc));
-
-    newInstrucao->bancoRegs = bancoRegs;
-    newInstrucao->memoriaInstrucao = memoriaInstrucao;
-    newInstrucao->memoriaDados = memoriaDados;
-    newInstrucao->pc = programCounter;
-    newInstrucao->prox = NULL;
-
-    return newInstrucao;
-}
-
-void inserePilha(descPilha* pilha, noInstruc* instruc) {
-
-    if(pilha->tamanho == 0) {
-
-        pilha->instrucoes = instruc;
-        pilha->tamanho++;
-    }
-    else {
-
-        noInstruc *aux = pilha->instrucoes;
-        instruc->prox = aux;
-        pilha->instrucoes = instruc;
-        pilha->tamanho++;
-    }
-
-}
-
 void imprimeControle(CTRL *controle){
     printf("\nControle\n");
     printf("regDest: [%d], srcB: [%d], memReg: [%d], ulaOP: [%d], memWrite: [%d], regWrite: [%d], branch: [%d]\n",
@@ -823,7 +783,7 @@ void imprimeULA(int *resultadoULA){
     resultadoULA[0], resultadoULA[1], resultadoULA[2]);
 }
 
-void step(int *parada, int *pc, struct memoria_dados *memDados, struct memoria_instrucao *memInst, BRegs *bancoReg, CTRL *controle){
+void step(int *parada, int *pc, struct memoria_dados *memoriaDados, struct memoria_instrucao *memInst, BRegs *bancoReg, CTRL *controle, descPilha *pilha){
     int *buscaReg = NULL;
     buscaReg = buscaBancoRegs(bancoReg,7,7,7,1);
     if (buscaReg[1] == 31) //condição DEFAULT de parada do programa
@@ -831,12 +791,16 @@ void step(int *parada, int *pc, struct memoria_dados *memDados, struct memoria_i
         //system("clear");
         printf("Programa finalizado com sucesso! $7 = 31!!\n");
         *parada = 0;
-        //rodar um back para ficar no último estado.
+        //rodar um back para ficar no último es tado.
         //chamar função back
         //break;
     }else
     {
         //AQUI COLOCAR O NO DA PILHA
+        BRegs* copiaBanco = copiaBancoRegistradores(bancoReg);
+        memDados* copiaMemDados = copiaMemoriaDados(&memoriaDados);
+        nodoPilha *newNodo = criaNodo(pc, copiaBanco, copiaMemDados);
+        inserePilha(pilha, newNodo);
 
         //setando variaveis de funcinamento
         struct instrucao instBuscada;
@@ -901,11 +865,11 @@ void step(int *parada, int *pc, struct memoria_dados *memDados, struct memoria_i
                 if (controle->memReg == 0 && controle->regWrite == 1)
                 {
                     //Se for LW
-                    salvaDadoReg(bancoReg, getDado(memDados, resultadoULA[0]), vetBusca[2], controle->regWrite);
+                    salvaDadoReg(bancoReg, getDado(memoriaDados, resultadoULA[0]), vetBusca[2], controle->regWrite);
                 }   
                 imprimeBanco(bancoReg);
                 //se for SW só salva na mem se memWrite = 1
-                insereMemDados(memDados, resultadoULA[0], vetBusca[1], controle->memWrite);
+                insereMemDados(memoriaDados, resultadoULA[0], vetBusca[1], controle->memWrite);
                 *pc = *pc + 1;
                 break;
             case tipo_J:
@@ -919,4 +883,79 @@ void step(int *parada, int *pc, struct memoria_dados *memDados, struct memoria_i
             printf("\n Instrucao invalida.\n");
         }
     }
+}
+
+descPilha* criarPilha() {
+    descPilha* new_pilha = (descPilha *)malloc(sizeof(descPilha));
+
+    new_pilha->instrucoes = NULL;
+    new_pilha->tamanho = 0;
+
+    return new_pilha;
+}
+
+void inserePilha(descPilha* pilha, nodoPilha* nodo) {
+    
+    if(pilha->tamanho == 0) {
+        pilha->instrucoes = nodo;
+        pilha->tamanho++;
+    }
+    else {
+        nodoPilha *aux = pilha->instrucoes;
+        pilha->instrucoes = nodo;
+        nodo->prox = aux;
+    }
+}
+
+nodoPilha* removePilha(descPilha* pilha) {
+
+    nodoPilha *aux = pilha->instrucoes;
+
+    if(pilha->tamanho == 0) {
+        printf("\nNenhuma instrucao foi executada!\n");
+    }
+    else {
+        pilha->instrucoes = aux->prox;
+        pilha->tamanho--;
+    }
+
+    return aux;
+}
+
+nodoPilha* criaNodo(int pc, BRegs* bancoRegs, memDados* memoriaDados) {
+    
+    nodoPilha *new_nodo = (nodoPilha *)malloc(sizeof(nodoPilha));
+
+    new_nodo->bancoRegs = bancoRegs;
+    new_nodo->pc = pc;
+    new_nodo->memoriaDados = memoriaDados;
+    new_nodo->prox = NULL;
+
+    return new_nodo;
+}
+
+memDados* copiaMemoriaDados(memDados* memoriaDados) {
+    memDados *newMemoria = (memDados *)malloc(sizeof(memDados));
+    newMemoria->mem_dados = (struct dado *)malloc(memoriaDados->tamanho * sizeof(struct dado));
+
+    for(int i = 0; i < memoriaDados->tamanho; i++) {
+        newMemoria->mem_dados[i] = memoriaDados->mem_dados[i];
+    }
+
+    return newMemoria;
+}
+
+BRegs* copiaBancoRegistradores(BRegs* bancoRegs) {
+    
+    BRegs *newBanco = (BRegs *)malloc(sizeof(BRegs));
+    regs *aux = bancoRegs->registradores;
+    regs *copiaAux = NULL;
+
+    while(aux != NULL) {
+        copiaAux = aux;
+        criaBanco(newBanco, copiaAux);
+        aux = aux->prox;
+    }
+
+    return newBanco;
 }

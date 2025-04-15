@@ -3,8 +3,9 @@ typedef struct registrador regs;
 typedef struct controle CTRL;
 typedef struct memoria_instrucao memInstruc;
 typedef struct memoria_dados memDados;
-typedef struct nodoInstrucao noInstruc;
-typedef struct descPilhaInstrucao descPilha;
+typedef struct pilha descPilha;
+typedef struct nodo nodoPilha;
+
 
 enum classe_inst{
     tipo_R, tipo_I, tipo_J, tipo_OUTROS
@@ -61,32 +62,28 @@ struct controle {
     int branch;
 };
 
-struct noPilha{
-    int pc;
-    BRegs bancoReg;
-    //mem dados;
-    //ultima instrucao;
-};
-
-struct nodoInstrucao {
-    BRegs* bancoRegs;
-    memInstruc* memoriaInstrucao;
-    memDados* memoriaDados;
-    int pc;
-    noInstruc *prox;
-};
-
-struct descPilhaInstrucao {
-    noInstruc* instrucoes;
-    int tamanho;
-};
-
 
 // ================= CONFIGURAÇÕES DA FUNÇÃO BACK =================== //
 
-descPilha* criaPilha();
-noInstruc* criaNodo(BRegs* bancoRegs, memInstruc* memoriaInstrucao, memDados* memoriaDados, int programCounter);
-void inserePilha(descPilha* pilha, noInstruc* instruc);
+struct pilha {
+    nodoPilha *instrucoes;
+    int tamanho;
+};
+
+struct nodo {
+    int pc;
+    BRegs* bancoRegs;
+    memDados* memoriaDados;
+    nodoPilha *prox;
+    
+};
+
+descPilha* criarPilha();
+void inserePilha(descPilha* pilha, nodoPilha* nodo);
+nodoPilha* removePilha(descPilha* pilha);
+nodoPilha* criaNodo(int pc, BRegs* bancoRegs, memDados* memoriaDados);
+memDados* copiaMemoriaDados(memDados* memoriaDados);
+BRegs* copiaBancoRegistradores(BRegs* bancoRegs);
 
 
 // ================= BANCO DE REGISTRADORES ========================= //
@@ -127,7 +124,7 @@ void salvarAsm(const char *nomeArquivo, struct memoria_instrucao *memInst);
 // ===================== STEP ======================================= //
 
 void imprimeControle(CTRL *controle);
-void step(int *parada, int *pc, struct memoria_dados *memDados, struct memoria_instrucao *memInst, BRegs *bancoReg, CTRL *controle);
+void step(int *parada, int *pc, struct memoria_dados *memDados, struct memoria_instrucao *memInst, BRegs *bancoReg, CTRL *controle, descPilha *pilha);
 
 // ===================== DECODIFICACAO ============================== //
 struct instrucao decodificaInstrucao(struct instrucao inst);
