@@ -799,7 +799,7 @@ void step(int *parada, int *pc, struct memoria_dados *memoriaDados, struct memor
         //AQUI COLOCAR O NO DA PILHA
         BRegs* copiaBanco = copiaBancoRegistradores(bancoReg);
         memDados* copiaMemDados = copiaMemoriaDados(&memoriaDados);
-        nodoPilha *newNodo = criaNodo(pc, copiaBanco, copiaMemDados);
+        nodoPilha *newNodo = criaNodo(*pc, copiaBanco, copiaMemDados);
         inserePilha(pilha, newNodo);
 
         //setando variaveis de funcinamento
@@ -948,11 +948,15 @@ memDados* copiaMemoriaDados(memDados* memoriaDados) {
 BRegs* copiaBancoRegistradores(BRegs* bancoRegs) {
     
     BRegs *newBanco = (BRegs *)malloc(sizeof(BRegs));
+    newBanco->registradores = NULL;
+    newBanco->tamanho = 0;
+
     regs *aux = bancoRegs->registradores;
     regs *copiaAux = NULL;
 
-    while(aux != NULL) {
-        copiaAux = aux;
+    while(aux->prox != NULL) {
+        copiaAux = criaRegistrador();
+        copiaAux->valor = aux->valor;
         criaBanco(newBanco, copiaAux);
         aux = aux->prox;
     }

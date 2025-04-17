@@ -96,6 +96,7 @@ void imprimeBanco(BRegs* bancoRegs);
 int* buscaBancoRegs(BRegs* bancoRegs, int rs, int rt, int rd, int defDest);
 void salvaDadoReg(BRegs* bancoRegistradores, int resultadoULA, int vetBuscaReg,  int sinalControle);
 
+
 // ================== MEMORIA DE DADOS  ============================= //
 void carregarDados(const char *nomeArquivo, struct memoria_dados *memDados);
 void imprimeDado(struct dado dado);
