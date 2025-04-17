@@ -783,38 +783,37 @@ void imprimeULA(int *resultadoULA){
     resultadoULA[0], resultadoULA[1], resultadoULA[2]);
 }
 
-void step(int *parada, int *pc, struct memoria_dados *memoriaDados, struct memoria_instrucao *memInst, BRegs *bancoReg, CTRL *controle, descPilha *pilha){
+void step(int *parada, int *pc, struct memoria_dados *memDados, struct memoria_instrucao *memInst, BRegs *bancoReg, CTRL *controle, descPilha *pilha){
     int *buscaReg = NULL;
-    buscaReg = buscaBancoRegs(bancoReg,7,7,7,1);
-    if (buscaReg[1] == 31) //condição DEFAULT de parada do programa
+    struct instrucao instBuscada;
+    instBuscada = buscaInstrucao(memInst, *pc);
+    if (strcmp(instBuscada.inst_char, "0000000000000000") == 0) //condição DEFAULT de parada do programa
     {
         //system("clear");
-        printf("Programa finalizado com sucesso! $7 = 31!!\n");
+        printf("Programa finalizado com sucesso!!!\n");
         *parada = 0;
-        //rodar um back para ficar no último es tado.
+        //rodar um back para ficar no último estado.
         //chamar função back
         //break;
     }else
     {
         //AQUI COLOCAR O NO DA PILHA
         BRegs* copiaBanco = copiaBancoRegistradores(bancoReg);
-        memDados* copiaMemDados = copiaMemoriaDados(&memoriaDados);
+        struct memoria_dados* copiaMemDados = copiaMemoriaDados(memDados);
         nodoPilha *newNodo = criaNodo(*pc, copiaBanco, copiaMemDados);
         inserePilha(pilha, newNodo);
 
         //setando variaveis de funcinamento
-        struct instrucao instBuscada;
         int *vetBusca = NULL;
         int *resultadoULA = NULL;
         int operando2;
         //fim configuração.
-        //system("clear");
 
-        instBuscada = buscaInstrucao(memInst, *pc);
-
-        printf("\nPC -> [%d]\n",*pc);
-        printf("Instrução executada: [%s]\n", instBuscada.assembly);
-
+        printf("\n ********* Inicio da Instrução ********* \n");
+        printf("->PC: [%d]\n",*pc);
+        printf("->Instrução executada: [%s]\n", instBuscada.assembly);
+        printf("->Registradores estado antigo");
+        imprimeBanco(bancoReg);
         if (strlen(instBuscada.inst_char) > 1)
         {
             setSignal(controle, instBuscada.opcode, instBuscada.funct);
@@ -822,32 +821,28 @@ void step(int *parada, int *pc, struct memoria_dados *memoriaDados, struct memor
             switch (instBuscada.tipo_inst)
             {
             case tipo_R:
-                /* code */
+                
                 vetBusca = buscaBancoRegs(bancoReg, instBuscada.rs, instBuscada.rt, instBuscada.rd, controle->regDest); // retorna [[rs][rt][rd]]
                 operando2 = fuctionMux(vetBusca[1], instBuscada.imm, controle->srcB);// Mux para saber de onde vem o op2 da ula ->> REG/IMM <<-
                 resultadoULA = processamentoULA(vetBusca[0], operando2, controle->ulaOP);// retorna [[resultado][overflow][comparaREG]]
-                //imprimeULA(resultadoULA);
                 //testar flag antes
                 salvaDadoReg(bancoReg,resultadoULA[0], vetBusca[2], controle->regWrite);
+                printf("->Registradores estado novo");
                 imprimeBanco(bancoReg);
                 *pc = *pc + 1;
                 break;
             case tipo_I:
-                //printf("entrou no IIIII");
                 if (instBuscada.opcode == 8) //beq
                 {
-                    //printf("entrou no BEQ");
                     vetBusca = buscaBancoRegs(bancoReg, instBuscada.rs, instBuscada.rt, instBuscada.rd, controle->regDest); // retorna [[rs][rt][rd]]
                     operando2 = fuctionMux(vetBusca[1], instBuscada.imm, controle->srcB);// Mux para saber de onde vem o op2 da ula ->> REG/IMM <<-
                     resultadoULA = processamentoULA(vetBusca[0], operando2, controle->ulaOP);// retorna [[resultado][overflow][comparaREG]]
                     if (resultadoULA[2] == 1 && controle->branch == 1)
                     {
-                        //printf("entrou no iffff");
                         *pc = *pc + instBuscada.imm + 1;
                         break;
                     }else
                     {
-                        //printf("entrou no ELSE");
                         *pc = *pc + 1;
                         break;
                     }    
@@ -856,7 +851,6 @@ void step(int *parada, int *pc, struct memoria_dados *memoriaDados, struct memor
                 vetBusca = buscaBancoRegs(bancoReg, instBuscada.rs, instBuscada.rt, instBuscada.rd, controle->regDest); // retorna [[rs][rt][rd]]
                 operando2 = fuctionMux(vetBusca[1], instBuscada.imm, controle->srcB);// Mux para saber de onde vem o op2 da ula ->> REG/IMM <<-
                 resultadoULA = processamentoULA(vetBusca[0], operando2, controle->ulaOP);// retorna [[resultado][overflow][comparaREG]]
-                //imprimeULA(resultadoULA);
                 if (controle->memReg == 1 && controle->regWrite == 1) 
                 {
                     //se for ADDI
@@ -865,11 +859,12 @@ void step(int *parada, int *pc, struct memoria_dados *memoriaDados, struct memor
                 if (controle->memReg == 0 && controle->regWrite == 1)
                 {
                     //Se for LW
-                    salvaDadoReg(bancoReg, getDado(memoriaDados, resultadoULA[0]), vetBusca[2], controle->regWrite);
-                }   
+                    salvaDadoReg(bancoReg, getDado(memDados, resultadoULA[0]), vetBusca[2], controle->regWrite);
+                }
+                printf("->Registradores estado novo"); 
                 imprimeBanco(bancoReg);
                 //se for SW só salva na mem se memWrite = 1
-                insereMemDados(memoriaDados, resultadoULA[0], vetBusca[1], controle->memWrite);
+                insereMemDados(memDados, resultadoULA[0], vetBusca[1], controle->memWrite);
                 *pc = *pc + 1;
                 break;
             case tipo_J:
@@ -878,6 +873,7 @@ void step(int *parada, int *pc, struct memoria_dados *memoriaDados, struct memor
             default:
                 break;
             }
+            printf(" ********* FIM da Instrução ********* \n\n");
         }else
         {
             printf("\n Instrucao invalida.\n");
@@ -894,6 +890,17 @@ descPilha* criarPilha() {
     return new_pilha;
 }
 
+void printStack(descPilha * pilha){
+    nodoPilha *aux = pilha->instrucoes;
+    while (aux != NULL)
+    {
+        imprimeBanco(aux->bancoRegs);
+        aux = aux->prox;
+    }
+    
+}
+
+
 void inserePilha(descPilha* pilha, nodoPilha* nodo) {
     
     if(pilha->tamanho == 0) {
@@ -904,6 +911,7 @@ void inserePilha(descPilha* pilha, nodoPilha* nodo) {
         nodoPilha *aux = pilha->instrucoes;
         pilha->instrucoes = nodo;
         nodo->prox = aux;
+        pilha->tamanho++;
     }
 }
 
@@ -934,8 +942,8 @@ nodoPilha* criaNodo(int pc, BRegs* bancoRegs, memDados* memoriaDados) {
     return new_nodo;
 }
 
-memDados* copiaMemoriaDados(memDados* memoriaDados) {
-    memDados *newMemoria = (memDados *)malloc(sizeof(memDados));
+struct memoria_dados* copiaMemoriaDados(struct memoria_dados* memoriaDados) {
+    struct memoria_dados *newMemoria = (struct memoria_dados *)malloc(sizeof(struct memoria_dados));
     newMemoria->mem_dados = (struct dado *)malloc(memoriaDados->tamanho * sizeof(struct dado));
 
     for(int i = 0; i < memoriaDados->tamanho; i++) {
@@ -962,4 +970,19 @@ BRegs* copiaBancoRegistradores(BRegs* bancoRegs) {
     }
 
     return newBanco;
+}
+
+void imprimeLogNoTerminal(const char *nomeArquivo) {
+    FILE *arquivo = fopen(nomeArquivo, "r");
+    if (!arquivo) {
+        printf("Erro ao abrir o arquivo de log: %s\n", nomeArquivo);
+        return;
+    }
+
+    char linha[256];
+    while (fgets(linha, sizeof(linha), arquivo)) {
+        printf("%s", linha);
+    }
+
+    fclose(arquivo);
 }

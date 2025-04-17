@@ -82,9 +82,9 @@ descPilha* criarPilha();
 void inserePilha(descPilha* pilha, nodoPilha* nodo);
 nodoPilha* removePilha(descPilha* pilha);
 nodoPilha* criaNodo(int pc, BRegs* bancoRegs, memDados* memoriaDados);
-memDados* copiaMemoriaDados(memDados* memoriaDados);
+struct memoria_dados* copiaMemoriaDados(struct memoria_dados* memoriaDados);
 BRegs* copiaBancoRegistradores(BRegs* bancoRegs);
-
+void printStack(descPilha * pilha);
 
 // ================= BANCO DE REGISTRADORES ========================= //
 
@@ -126,7 +126,7 @@ void salvarAsm(const char *nomeArquivo, struct memoria_instrucao *memInst);
 
 void imprimeControle(CTRL *controle);
 void step(int *parada, int *pc, struct memoria_dados *memDados, struct memoria_instrucao *memInst, BRegs *bancoReg, CTRL *controle, descPilha *pilha);
-
+void imprimeLogNoTerminal(const char *nomeArquivo);
 // ===================== DECODIFICACAO ============================== //
 struct instrucao decodificaInstrucao(struct instrucao inst);
 void getOpcode(const char * palavra, char *opcode);

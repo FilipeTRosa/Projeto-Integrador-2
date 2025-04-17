@@ -1,0 +1,254 @@
+
+ ********* Inicio da Instrução ********* 
+->PC: [0]
+->Instrução executada: [lw $2, $0, 10]
+->Registradores estado antigo
+== Banco de Registradores ==
+$0 : 0     $1 : 0     $2 : 0     $3 : 0     
+$4 : 0     $5 : 0     $6 : 0     $7 : 0     
+============================
+->Registradores estado novo
+== Banco de Registradores ==
+$0 : 0     $1 : 0     $2 : 2     $3 : 0     
+$4 : 0     $5 : 0     $6 : 0     $7 : 0     
+============================
+ ********* FIM da Instrução ********* 
+
+
+ ********* Inicio da Instrução ********* 
+->PC: [1]
+->Instrução executada: [lw $3, $0, 11]
+->Registradores estado antigo
+== Banco de Registradores ==
+$0 : 0     $1 : 0     $2 : 2     $3 : 0     
+$4 : 0     $5 : 0     $6 : 0     $7 : 0     
+============================
+->Registradores estado novo
+== Banco de Registradores ==
+$0 : 0     $1 : 0     $2 : 2     $3 : 3     
+$4 : 0     $5 : 0     $6 : 0     $7 : 0     
+============================
+ ********* FIM da Instrução ********* 
+
+
+ ********* Inicio da Instrução ********* 
+->PC: [2]
+->Instrução executada: [addi $1, $0, 1]
+->Registradores estado antigo
+== Banco de Registradores ==
+$0 : 0     $1 : 0     $2 : 2     $3 : 3     
+$4 : 0     $5 : 0     $6 : 0     $7 : 0     
+============================
+->Registradores estado novo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 3     
+$4 : 0     $5 : 0     $6 : 0     $7 : 0     
+============================
+ ********* FIM da Instrução ********* 
+
+
+ ********* Inicio da Instrução ********* 
+->PC: [3]
+->Instrução executada: [add $4, $0, $0]
+->Registradores estado antigo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 3     
+$4 : 0     $5 : 0     $6 : 0     $7 : 0     
+============================
+->Registradores estado novo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 3     
+$4 : 0     $5 : 0     $6 : 0     $7 : 0     
+============================
+ ********* FIM da Instrução ********* 
+
+
+ ********* Inicio da Instrução ********* 
+->PC: [4]
+->Instrução executada: [beq $0, $3, 3]
+->Registradores estado antigo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 3     
+$4 : 0     $5 : 0     $6 : 0     $7 : 0     
+============================
+ ********* FIM da Instrução ********* 
+
+
+ ********* Inicio da Instrução ********* 
+->PC: [5]
+->Instrução executada: [add $4, $2, $4]
+->Registradores estado antigo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 3     
+$4 : 0     $5 : 0     $6 : 0     $7 : 0     
+============================
+->Registradores estado novo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 3     
+$4 : 2     $5 : 0     $6 : 0     $7 : 0     
+============================
+ ********* FIM da Instrução ********* 
+
+
+ ********* Inicio da Instrução ********* 
+->PC: [6]
+->Instrução executada: [sub $3, $3, $1]
+->Registradores estado antigo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 3     
+$4 : 2     $5 : 0     $6 : 0     $7 : 0     
+============================
+->Registradores estado novo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 2     
+$4 : 2     $5 : 0     $6 : 0     $7 : 0     
+============================
+ ********* FIM da Instrução ********* 
+
+
+ ********* Inicio da Instrução ********* 
+->PC: [7]
+->Instrução executada: [j 4]
+->Registradores estado antigo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 2     
+$4 : 2     $5 : 0     $6 : 0     $7 : 0     
+============================
+ ********* FIM da Instrução ********* 
+
+
+ ********* Inicio da Instrução ********* 
+->PC: [4]
+->Instrução executada: [beq $0, $3, 3]
+->Registradores estado antigo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 2     
+$4 : 2     $5 : 0     $6 : 0     $7 : 0     
+============================
+ ********* FIM da Instrução ********* 
+
+
+ ********* Inicio da Instrução ********* 
+->PC: [5]
+->Instrução executada: [add $4, $2, $4]
+->Registradores estado antigo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 2     
+$4 : 2     $5 : 0     $6 : 0     $7 : 0     
+============================
+->Registradores estado novo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 2     
+$4 : 4     $5 : 0     $6 : 0     $7 : 0     
+============================
+ ********* FIM da Instrução ********* 
+
+
+ ********* Inicio da Instrução ********* 
+->PC: [6]
+->Instrução executada: [sub $3, $3, $1]
+->Registradores estado antigo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 2     
+$4 : 4     $5 : 0     $6 : 0     $7 : 0     
+============================
+->Registradores estado novo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 1     
+$4 : 4     $5 : 0     $6 : 0     $7 : 0     
+============================
+ ********* FIM da Instrução ********* 
+
+
+ ********* Inicio da Instrução ********* 
+->PC: [7]
+->Instrução executada: [j 4]
+->Registradores estado antigo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 1     
+$4 : 4     $5 : 0     $6 : 0     $7 : 0     
+============================
+ ********* FIM da Instrução ********* 
+
+
+ ********* Inicio da Instrução ********* 
+->PC: [4]
+->Instrução executada: [beq $0, $3, 3]
+->Registradores estado antigo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 1     
+$4 : 4     $5 : 0     $6 : 0     $7 : 0     
+============================
+ ********* FIM da Instrução ********* 
+
+
+ ********* Inicio da Instrução ********* 
+->PC: [5]
+->Instrução executada: [add $4, $2, $4]
+->Registradores estado antigo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 1     
+$4 : 4     $5 : 0     $6 : 0     $7 : 0     
+============================
+->Registradores estado novo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 1     
+$4 : 6     $5 : 0     $6 : 0     $7 : 0     
+============================
+ ********* FIM da Instrução ********* 
+
+
+ ********* Inicio da Instrução ********* 
+->PC: [6]
+->Instrução executada: [sub $3, $3, $1]
+->Registradores estado antigo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 1     
+$4 : 6     $5 : 0     $6 : 0     $7 : 0     
+============================
+->Registradores estado novo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 0     
+$4 : 6     $5 : 0     $6 : 0     $7 : 0     
+============================
+ ********* FIM da Instrução ********* 
+
+
+ ********* Inicio da Instrução ********* 
+->PC: [7]
+->Instrução executada: [j 4]
+->Registradores estado antigo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 0     
+$4 : 6     $5 : 0     $6 : 0     $7 : 0     
+============================
+ ********* FIM da Instrução ********* 
+
+
+ ********* Inicio da Instrução ********* 
+->PC: [4]
+->Instrução executada: [beq $0, $3, 3]
+->Registradores estado antigo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 0     
+$4 : 6     $5 : 0     $6 : 0     $7 : 0     
+============================
+ ********* FIM da Instrução ********* 
+
+
+ ********* Inicio da Instrução ********* 
+->PC: [8]
+->Instrução executada: [sw $4, $0, 12]
+->Registradores estado antigo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 0     
+$4 : 6     $5 : 0     $6 : 0     $7 : 0     
+============================
+->Registradores estado novo
+== Banco de Registradores ==
+$0 : 0     $1 : 1     $2 : 2     $3 : 0     
+$4 : 6     $5 : 0     $6 : 0     $7 : 0     
+============================
+ ********* FIM da Instrução ********* 
+
+Programa finalizado com sucesso!!!
