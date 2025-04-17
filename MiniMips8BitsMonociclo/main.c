@@ -133,27 +133,36 @@ int main(int argc, char const *argv[])
                 
                 break;
             case 8:
+                FILE *log = freopen("log_run.txt", "w", stdout);
+                if (!log) { perror("Erro ao abrir log"); break; }
+                // int contador = 0;
+
                 while (parada)
                 {
                     step(&parada, &pc, &memDados, &mem, bancoRegistradores, controle, pilha);
+                    //if (++contador > 1000) { // proteção contra loop infinito
+                    //    printf("Loop detectado! Encerrando manualmente.\n");
+                    //    parada = 0;
+                    //}
                 }
+
+                fflush(stdout);
+                fclose(log);
+                freopen("/dev/tty", "w", stdout); // volta para terminal
+                imprimeLogNoTerminal("log_run.txt");
                 break;
             case 9:
-                    //tem que mudar isso para dentro da funcao.
-                    //noPilha = criaNodo(bancoRegistradores, &mem, &memDados, pc);
-                    //inserePilha(pilha, noPilha);
-
                     step(&parada, &pc, &memDados, &mem, bancoRegistradores, controle, pilha);
-                    printf("Proximo PC *teorico* -> [%d] ** pode vir Jump **\n", pc);
-                
+       
                 break;
             case 10:
                 printf("\nBACK\n");
+                
                 nodoPilha *voltaInstrucao = removePilha(pilha);
                 bancoRegistradores = voltaInstrucao->bancoRegs;
                 pc = voltaInstrucao->pc;
                 memDados = *voltaInstrucao->memoriaDados;
-
+                //printStack(pilha);
                 break;
             case 0: 
                 system("clear");
