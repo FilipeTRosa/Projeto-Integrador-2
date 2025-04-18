@@ -20,6 +20,11 @@ int main(int argc, char const *argv[])
     char arquivoMemDados[50];
     //Fim alocação de memoria de dados
 
+    //
+    struct estatistica *stat = NULL;
+    stat = criaStat();
+    //
+
     //Variaveis do conversor de bin
     int dec;
     int comp2 = 1;
@@ -110,10 +115,11 @@ int main(int argc, char const *argv[])
                 system("clear");
                 imprimeBanco(bancoRegistradores); // Testando se o banco de registradores foi criado de maneira correta
                 break;
-            case 5:
+            case 5: 
                 imprimeMemInstrucoes(&mem);
                 imprimeMemDados(&memDados);
                 imprimeBanco(bancoRegistradores);
+                imprimeEstatistica(stat);
                 break;
             case 6:
                 system("clear");
@@ -139,7 +145,7 @@ int main(int argc, char const *argv[])
 
                 while (parada)
                 {
-                    step(&parada, &pc, &memDados, &mem, bancoRegistradores, controle, pilha);
+                    step(&parada, &pc, &memDados, &mem, bancoRegistradores, controle, pilha, stat);
                     //if (++contador > 1000) { // proteção contra loop infinito
                     //    printf("Loop detectado! Encerrando manualmente.\n");
                     //    parada = 0;
@@ -152,16 +158,25 @@ int main(int argc, char const *argv[])
                 imprimeLogNoTerminal("log_run.txt");
                 break;
             case 9:
-                    step(&parada, &pc, &memDados, &mem, bancoRegistradores, controle, pilha);
+                    step(&parada, &pc, &memDados, &mem, bancoRegistradores, controle, pilha, stat);
        
                 break;
             case 10:
                 printf("\nBACK\n");
-                
                 nodoPilha *voltaInstrucao = removePilha(pilha);
-                bancoRegistradores = voltaInstrucao->bancoRegs;
-                pc = voltaInstrucao->pc;
-                memDados = *voltaInstrucao->memoriaDados;
+                if (voltaInstrucao != NULL)
+                {
+                    stat->back++;
+                    bancoRegistradores = voltaInstrucao->bancoRegs;
+                    pc = voltaInstrucao->pc;
+                    memDados = *voltaInstrucao->memoriaDados;
+                }
+                printf("\n ********* Instrucao Atutal apos BACK ********* \n");
+                printf("->PC: [%d]\n",pc);
+                printf("->Instrução executada: [%s]\n", buscaInstrucao(&mem, pc).assembly);
+                printf("->Registradores estado antigo");
+                imprimeBanco(bancoRegistradores);
+
                 //printStack(pilha);
                 break;
             case 0: 
