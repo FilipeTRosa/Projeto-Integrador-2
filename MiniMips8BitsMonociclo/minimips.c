@@ -442,6 +442,19 @@ void salvaDadoReg(BRegs* bancoRegs, int resultadoULA, int vetBuscaReg, int sinal
     }
 }
 
+struct estatistica * criaStat() {
+    struct estatistica * new_stat = (struct estatistica *)malloc(sizeof(struct estatistica));
+    new_stat->back = 0;
+    new_stat->tipoI = 0;
+    new_stat->tipoJ = 0;
+    new_stat->tipoR = 0;
+    new_stat->totalInstrucoes = 0;
+
+    return new_stat;
+}
+
+
+
 CTRL* criaControle() {
     CTRL* new_controle = (CTRL *)malloc(sizeof(CTRL));
     new_controle->regDest = 0;
@@ -569,8 +582,8 @@ void getImm(const char *palavra, char *imm){
 }
 
 void getAddr(const char *palavra, char *addr){
-    strncpy(addr, palavra + 9, 7);
-    addr[7] = '\0';
+    strncpy(addr, palavra + 8, 8);
+    addr[9] = '\0';
 }
 
 void estenderSinalImm(char * imm, char * immExtendido){
@@ -622,7 +635,7 @@ struct instrucao decodificaInstrucao(struct instrucao inst){
     char funct[4];
     char rd[4];
     char imm[6];
-    char addr[7];
+    char addr[9];
     char immExtendido[9];
 
     //Opcode
@@ -701,7 +714,7 @@ struct instrucao decodificaInstrucao(struct instrucao inst){
         // TIPO J
         //Addr
         getAddr(inst.inst_char, addr);
-        inst.addr = conversorBinParaDecimal(0,addr); 
+        inst.addr = conversorBinParaDecimal(0,addr);
         //Fim Addr
         
         //Tipo instrucao
@@ -783,18 +796,14 @@ void imprimeULA(int *resultadoULA){
     resultadoULA[0], resultadoULA[1], resultadoULA[2]);
 }
 
-void step(int *parada, int *pc, struct memoria_dados *memDados, struct memoria_instrucao *memInst, BRegs *bancoReg, CTRL *controle, descPilha *pilha){
+void step(int *parada, int *pc, struct memoria_dados *memDados, struct memoria_instrucao *memInst, BRegs *bancoReg, CTRL *controle, descPilha *pilha, struct estatistica * stat){
     int *buscaReg = NULL;
     struct instrucao instBuscada;
     instBuscada = buscaInstrucao(memInst, *pc);
     if (strcmp(instBuscada.inst_char, "0000000000000000") == 0) //condição DEFAULT de parada do programa
     {
-        //system("clear");
         printf("Programa finalizado com sucesso!!!\n");
         *parada = 0;
-        //rodar um back para ficar no último estado.
-        //chamar função back
-        //break;
     }else
     {
         //AQUI COLOCAR O NO DA PILHA
@@ -821,7 +830,7 @@ void step(int *parada, int *pc, struct memoria_dados *memDados, struct memoria_i
             switch (instBuscada.tipo_inst)
             {
             case tipo_R:
-                
+                stat->tipoR++;
                 vetBusca = buscaBancoRegs(bancoReg, instBuscada.rs, instBuscada.rt, instBuscada.rd, controle->regDest); // retorna [[rs][rt][rd]]
                 operando2 = fuctionMux(vetBusca[1], instBuscada.imm, controle->srcB);// Mux para saber de onde vem o op2 da ula ->> REG/IMM <<-
                 resultadoULA = processamentoULA(vetBusca[0], operando2, controle->ulaOP);// retorna [[resultado][overflow][comparaREG]]
@@ -832,6 +841,7 @@ void step(int *parada, int *pc, struct memoria_dados *memDados, struct memoria_i
                 *pc = *pc + 1;
                 break;
             case tipo_I:
+                stat->tipoI++;
                 if (instBuscada.opcode == 8) //beq
                 {
                     vetBusca = buscaBancoRegs(bancoReg, instBuscada.rs, instBuscada.rt, instBuscada.rd, controle->regDest); // retorna [[rs][rt][rd]]
@@ -868,12 +878,14 @@ void step(int *parada, int *pc, struct memoria_dados *memDados, struct memoria_i
                 *pc = *pc + 1;
                 break;
             case tipo_J:
+                stat->tipoJ++;
                 *pc = 0 + instBuscada.addr;
                 break;
             default:
                 break;
             }
             printf(" ********* FIM da Instrução ********* \n\n");
+            stat->totalInstrucoes++;
         }else
         {
             printf("\n Instrucao invalida.\n");
@@ -985,4 +997,15 @@ void imprimeLogNoTerminal(const char *nomeArquivo) {
     }
 
     fclose(arquivo);
+}
+
+void imprimeEstatistica(struct estatistica * est) {
+    printf("===== Estatísticas da Execução =====\n");
+    printf("Total de Instruções: %d\n", est->totalInstrucoes);
+    printf("Tipo R: %d\n", est->tipoR);
+    printf("Tipo I: %d\n", est->tipoI);
+    printf("Tipo J: %d\n", est->tipoJ);
+    printf("Back: %d\n", est->back);
+    printf("Total Back + Instruções: %d \n", (est->back + est->totalInstrucoes));
+    printf("====================================\n");
 }

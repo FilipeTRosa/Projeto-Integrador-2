@@ -62,6 +62,13 @@ struct controle {
     int branch;
 };
 
+struct estatistica{
+    int totalInstrucoes;
+    int tipoR;
+    int tipoI;
+    int tipoJ;
+    int back;
+};
 
 // ================= CONFIGURAÇÕES DA FUNÇÃO BACK =================== //
 
@@ -125,7 +132,7 @@ void salvarAsm(const char *nomeArquivo, struct memoria_instrucao *memInst);
 // ===================== STEP ======================================= //
 
 void imprimeControle(CTRL *controle);
-void step(int *parada, int *pc, struct memoria_dados *memDados, struct memoria_instrucao *memInst, BRegs *bancoReg, CTRL *controle, descPilha *pilha);
+void step(int *parada, int *pc, struct memoria_dados *memDados, struct memoria_instrucao *memInst, BRegs *bancoReg, CTRL *controle, descPilha *pilha, struct estatistica * stat);
 void imprimeLogNoTerminal(const char *nomeArquivo);
 // ===================== DECODIFICACAO ============================== //
 struct instrucao decodificaInstrucao(struct instrucao inst);
@@ -140,3 +147,5 @@ void estenderSinalImm(char * imm, char * immExtendido);
 char* getNomeFunct(int funct);
 char* getNomeOpcode(int opcode);
 // ================================================================== //
+struct estatistica * criaStat();
+void imprimeEstatistica(struct estatistica * est);
