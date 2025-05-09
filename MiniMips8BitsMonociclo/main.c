@@ -138,7 +138,7 @@ int main(int argc, char const *argv[])
                 salvarMemoriaEmArquivo(arquivoMemDados, &memDados);
                 
                 break;
-            case 8:
+            case 8:{
                 FILE *log = freopen("log_run.txt", "w", stdout);
                 if (!log) { perror("Erro ao abrir log"); break; }
                 // int contador = 0;
@@ -157,6 +157,7 @@ int main(int argc, char const *argv[])
                 freopen("/dev/tty", "w", stdout); // volta para terminal
                 imprimeLogNoTerminal("log_run.txt");
                 break;
+            }
             case 9:
                     step(&parada, &pc, &memDados, &mem, bancoRegistradores, controle, pilha, stat);
        
